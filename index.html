@@ -3,49 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>가계부 웹앱</title>
+  <title>식비 달력</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>가계부</h1>
-  <form id="expense-form">
-    <div>
-      <label for="date">날짜</label>
-      <input type="date" id="date" required />
-    </div>
-    <div>
-      <label for="desc">내역</label>
-      <input type="text" id="desc" placeholder="예: 커피" required />
-    </div>
-    <div>
-      <label for="amount">금액(₩)</label>
-      <input type="number" id="amount" placeholder="0" required />
-    </div>
-    <div>
-      <label for="category">분류</label>
-      <select id="category">
-        <option value="식비">식비</option>
-        <option value="교통">교통</option>
-        <option value="생활">생활</option>
-        <option value="기타">기타</option>
-      </select>
-    </div>
-    <div class="button-wrap">
-      <button type="submit">추가</button>
-    </div>
-  </form>
-
-  <table id="expense-table">
-    <thead>
-      <tr>
-        <th>날짜</th><th>내역</th><th>금액(₩)</th><th>분류</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <div id="total">식비 합계: ₩0</div>
-
+  <h1>식비 달력</h1>
+  <div id="calendar"></div>
   <script src="app.js"></script>
 </body>
 </html>
