@@ -1,99 +1,279 @@
-body {
+/* 기본 리셋 및 공통 스타일 */
+* {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f0f4f8;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+body {
+  background-color: #f5f7fa;
   color: #333;
+  line-height: 1.6;
 }
 
-.app {
+.container {
   max-width: 900px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-  padding: 20px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
-header {
+/* 헤더 스타일 */
+.header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 2rem;
 }
 
-header h1 {
-  font-size: 2rem;
-  color: #2c3e50;
+.header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  color: #3c40c6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.nav {
+.calendar-nav {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 1rem;
 }
 
-.nav button {
-  padding: 8px 16px;
-  background: #3498db;
+#current-month-year {
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #2c3e50;
+  min-width: 200px;
+}
+
+.nav-btn {
+  background-color: #3c40c6;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-.nav button:hover {
-  background: #2980b9;
+.nav-btn:hover {
+  background-color: #575fcf;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-#monthYear {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #2c3e50;
+.nav-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.calendar {
+/* 달력 컨테이너 스타일 */
+.calendar-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+/* 요일 헤더 스타일 */
+.weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-  padding: 10px 0;
+  background-color: #f9f9f9;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 8px;
 }
 
-.calendar .day-name {
-  font-weight: bold;
-  color: #7f8c8d;
+.weekday {
   text-align: center;
-}
-
-.calendar .day {
-  background: #ecf0f1;
-  padding: 10px;
-  border-radius: 10px;
-  min-height: 80px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.calendar .day .date {
-  font-size: 0.9rem;
-  font-weight: bold;
+  padding: 1rem 0;
+  font-weight: 600;
   color: #2c3e50;
 }
 
-.calendar .day .amount {
-  font-size: 0.85rem;
-  color: #27ae60;
-  text-align: right;
+/* 주말 색상 다르게 표시 */
+.weekday.sun {
+  color: #e74c3c; /* 일요일 - 빨간색 */
+}
+
+.weekday.sat {
+  color: #3498db; /* 토요일 - 파란색 */
+}
+
+/* 달력 그리드 스타일 */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.date-cell {
+  position: relative; /* 추가: pseudo-element 위치 기준 설정 */
+  min-height: 100px;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* 추가: 내용물이 잘리지 않도록 */
+}
+
+.date-cell:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  background-color: #f0f4f8;
+  border-color: #ddd;
+}
+
+.date-number {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+/* 오늘 날짜 강조 */
+.today {
+  background-color: #e3f2fd;
+  border: 2px solid #3c40c6;
+}
+
+/* 이전/다음 달 날짜 스타일 */
+.other-month {
+  opacity: 0.4;
+}
+
+/* 식비 금액 스타일 */
+.expense-amount {
+  color: #e74c3c;
+  font-weight: 500;
+  font-size: 1.1rem;
   margin-top: auto;
+  text-align: right;
+  padding-top: 10px;
+  border-top: 1px dashed #e0e0e0;
+}
+
+/* 식비 없는 날 표시 */
+.no-expense {
+  margin-top: auto;
+  color: #95a5a6;
+  font-size: 0.9rem;
+  text-align: center;
+  font-style: italic;
+  padding-top: 10px;
+}
+
+/* 주말 날짜 색상 */
+.weekend-sun .date-number {
+  color: #e74c3c;
+}
+
+.weekend-sat .date-number {
+  color: #3498db;
+}
+
+/* 푸터 스타일 */
+.footer {
+  margin-top: 2rem;
+  text-align: right;
+}
+
+.monthly-summary {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.2rem 1.8rem;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+.monthly-summary p {
+  margin: 0.7rem 0;
+  font-size: 1.1rem;
+}
+
+#total-expense, #average-expense, #max-expense {
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+#max-expense-date {
   font-weight: 600;
 }
 
-.calendar .day.empty {
-  background: none;
-  border: none;
-  padding: 0;
+/* 최고 지출일 표시 */
+.max-expense {
+  position: relative;
+  overflow: hidden;
+}
+
+.max-expense::before {
+  content: '최고';
+  position: absolute;
+  top: -8px; /* 위치 조정 */
+  right: -8px;
+  background-color: #e74c3c;
+  color: white;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  transform: rotate(45deg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: 1; /* 추가: 다른 요소 위에 표시 */
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .container {
+    margin: 1rem;
+    padding: 0;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  #current-month-year {
+    font-size: 1.5rem;
+  }
+  
+  .date-cell {
+    min-height: 80px;
+    padding: 8px;
+  }
+  
+  .date-number {
+    font-size: 1rem;
+  }
+  
+  .expense-amount {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-container {
+    padding: 1rem;
+  }
+  
+  .weekday {
+    padding: 0.6rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .date-cell {
+    min-height: 60px;
+    padding: 5px;
+  }
+  
+  .nav-btn {
+    width: 35px;
+    height: 35px;
+  }
 }

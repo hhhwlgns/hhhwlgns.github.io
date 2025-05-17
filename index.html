@@ -3,23 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>식비 캘린더</title>
-  <link rel="stylesheet" href="style.css">
+  <title>식비 가계부</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="app">
-    <header>
-      <h1>🍽 식비 캘린더</h1>
-      <div class="nav">
-        <button id="prevMonth">◀ 이전</button>
-        <span id="monthYear"></span>
-        <button id="nextMonth">다음 ▶</button>
+  <div class="container">
+    <header class="header">
+      <h1>식비 가계부</h1>
+      <div class="calendar-nav">
+        <button id="prev-month" class="nav-btn">&#10094;</button>
+        <h2 id="current-month-year">2025년 5월</h2>
+        <button id="next-month" class="nav-btn">&#10095;</button>
       </div>
     </header>
-    <main>
-      <div class="calendar" id="calendar"></div>
+    
+    <main class="calendar-container">
+      <div class="weekdays">
+        <div class="weekday sun">일</div>
+        <div class="weekday">월</div>
+        <div class="weekday">화</div>
+        <div class="weekday">수</div>
+        <div class="weekday">목</div>
+        <div class="weekday">금</div>
+        <div class="weekday sat">토</div>
+      </div>
+      
+      <div id="calendar-grid" class="calendar-grid">
+        <!-- JavaScript에서 동적으로 날짜와 금액이 채워질 부분 -->
+      </div>
     </main>
+    
+    <footer class="footer">
+      <div class="monthly-summary">
+        <p>이번 달 총 식비: <span id="total-expense">0</span>원</p>
+        <p>일평균 식비: <span id="average-expense">0</span>원</p>
+        <p>최고 지출일: <span id="max-expense-date">-</span> (<span id="max-expense">0</span>원)</p>
+      </div>
+    </footer>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
