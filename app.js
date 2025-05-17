@@ -1,52 +1,76 @@
-// 예시 데이터 (백엔드 연동 시 대체될 예정)
-const expenseData = {
-    "2025-05-01": 12000,
-    "2025-05-03": 7800,
-    "2025-05-06": 25000,
-    "2025-05-08": 9900,
-    "2025-05-13": 14400,
-    "2025-05-18": 17500,
-  };
-  
-  const calendar = document.getElementById('calendar');
-  
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth(); // 0-indexed (0 = January)
-  
-  // 이번 달 1일의 요일
+const calendar = document.getElementById("calendar");
+const monthYear = document.getElementById("monthYear");
+const prevMonthBtn = document.getElementById("prevMonth");
+const nextMonthBtn = document.getElementById("nextMonth");
+const dateInput = document.getElementById("date");
+const amountInput = document.getElementById("amount");
+const addEntryBtn = document.getElementById("addEntry");
+
+let currentDate = new Date();
+let expenses = JSON.parse(localStorage.getItem("foodExpenses")) || {};
+
+function renderCalendar(date) {
+  calendar.innerHTML = "";
+  const year = date.getFullYear();
+  const month = date.getMonth();
   const firstDay = new Date(year, month, 1).getDay();
-  // 이번 달의 마지막 날짜
-  const lastDate = new Date(year, month + 1, 0).getDate();
-  
-  // 빈 칸 (이전 달 여백)
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  monthYear.textContent = `${year}년 ${month + 1}월`;
+
+  const daysOfWeek = ['일', '월', '화', '수', '목', '금', '토'];
+  for (let day of daysOfWeek) {
+    const dayHeader = document.createElement("div");
+    dayHeader.classList.add("day");
+    dayHeader.textContent = day;
+    calendar.appendChild(dayHeader);
+  }
+
   for (let i = 0; i < firstDay; i++) {
-    const emptyCell = document.createElement('div');
-    emptyCell.classList.add('day');
-    calendar.appendChild(emptyCell);
+    calendar.appendChild(document.createElement("div"));
   }
-  
-  // 날짜 채우기
-  for (let day = 1; day <= lastDate; day++) {
-    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const amount = expenseData[dateStr] || null;
-  
-    const cell = document.createElement('div');
-    cell.classList.add('day');
-  
-    const dateEl = document.createElement('div');
-    dateEl.classList.add('date');
-    dateEl.textContent = day;
-  
-    cell.appendChild(dateEl);
-  
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayDiv = document.createElement("div");
+    const fullDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const amount = expenses[fullDate] || 0;
+    dayDiv.innerHTML = `<div class="day">${day}</div>`;
     if (amount) {
-      const amountEl = document.createElement('div');
-      amountEl.classList.add('amount');
-      amountEl.textContent = `₩${amount.toLocaleString()}`;
-      cell.appendChild(amountEl);
+      dayDiv.innerHTML += `<div class="amount">₩${amount.toLocaleString()}</div>`;
     }
-  
-    calendar.appendChild(cell);
+    calendar.appendChild(dayDiv);
   }
-  
+}
+
+function updateStorage() {
+  localStorage.setItem("foodExpenses", JSON.stringify(expenses));
+}
+
+addEntryBtn.addEventListener("click", () => {
+  const date = dateInput.value;
+  const amount = parseInt(amountInput.value);
+  if (!date || isNaN(amount)) return alert("날짜와 금액을 정확히 입력해주세요.");
+
+  expenses[date] = (expenses[date] || 0) + amount;
+  updateStorage();
+
+  const entryDate = new Date(date);
+  if (entryDate.getFullYear() === currentDate.getFullYear() && entryDate.getMonth() === currentDate.getMonth()) {
+    renderCalendar(currentDate);
+  }
+
+  dateInput.value = "";
+  amountInput.value = "";
+});
+
+prevMonthBtn.addEventListener("click", () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar(currentDate);
+});
+
+nextMonthBtn.addEventListener("click", () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar(currentDate);
+});
+
+renderCalendar(currentDate);
