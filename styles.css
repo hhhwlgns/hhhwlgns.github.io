@@ -1,94 +1,99 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
   margin: 0;
-  padding: 20px;
-}
-
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-h1, h2 {
-  text-align: center;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f4f8;
   color: #333;
 }
 
-.calendar-header {
+.app {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 2rem;
+  color: #2c3e50;
+}
+
+.nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin: 20px 0;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.nav button {
+  padding: 8px 16px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.nav button:hover {
+  background: #2980b9;
 }
 
 #monthYear {
-  font-size: 1.2em;
+  font-size: 1.1rem;
   font-weight: bold;
+  color: #2c3e50;
 }
 
 .calendar {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
+  padding: 10px 0;
+}
+
+.calendar .day-name {
+  font-weight: bold;
+  color: #7f8c8d;
   text-align: center;
 }
 
-.calendar div {
-  border: 1px solid #dee2e6;
-  padding: 10px;
-  min-height: 60px;
-  position: relative;
-  border-radius: 8px;
-  background: #ffffff;
-}
-
 .calendar .day {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.calendar .amount {
-  font-size: 0.9em;
-  color: #28a745;
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-}
-
-.entry-form {
-  margin-top: 30px;
+  background: #ecf0f1;
+  padding: 10px;
+  border-radius: 10px;
+  min-height: 80px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
 }
 
-.entry-form label {
+.calendar .day .date {
+  font-size: 0.9rem;
   font-weight: bold;
+  color: #2c3e50;
 }
 
-.entry-form input {
-  padding: 8px;
-  font-size: 1em;
-  border: 1px solid #ced4da;
-  border-radius: 5px;
+.calendar .day .amount {
+  font-size: 0.85rem;
+  color: #27ae60;
+  text-align: right;
+  margin-top: auto;
+  font-weight: 600;
 }
 
-#addEntry {
-  background-color: #007bff;
-  color: white;
-  padding: 10px;
-  font-size: 1em;
+.calendar .day.empty {
+  background: none;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#addEntry:hover {
-  background-color: #0056b3;
+  padding: 0;
 }

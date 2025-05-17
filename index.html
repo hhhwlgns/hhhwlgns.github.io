@@ -1,30 +1,25 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>식비 가계부 캘린더</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>식비 캘린더</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>식비 가계부</h1>
-    <div class="calendar-header">
-      <button id="prevMonth">◀</button>
-      <div id="monthYear"></div>
-      <button id="nextMonth">▶</button>
-    </div>
-    <div class="calendar" id="calendar"></div>
-    <div class="entry-form">
-      <h2>지출 입력</h2>
-      <label for="date">날짜:</label>
-      <input type="date" id="date" />
-      <label for="amount">금액 (원):</label>
-      <input type="number" id="amount" />
-      <button id="addEntry">추가</button>
-    </div>
+  <div class="app">
+    <header>
+      <h1>🍽 식비 캘린더</h1>
+      <div class="nav">
+        <button id="prevMonth">◀ 이전</button>
+        <span id="monthYear"></span>
+        <button id="nextMonth">다음 ▶</button>
+      </div>
+    </header>
+    <main>
+      <div class="calendar" id="calendar"></div>
+    </main>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
