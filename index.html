@@ -3,44 +3,230 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>식비 가계부</title>
+  <title>스마트 식비 가계부</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <header class="header">
-      <h1>식비 가계부</h1>
-      <div class="calendar-nav">
-        <button id="prev-month" class="nav-btn">&#10094;</button>
-        <h2 id="current-month-year">2025년 5월</h2>
-        <button id="next-month" class="nav-btn">&#10095;</button>
+  <!-- 사이드바 -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>📅 가계부</h2>
+      <button class="close-btn" id="close-btn">&times;</button>
+    </div>
+    <div class="sidebar-menu">
+      <a href="#" class="nav-item active" data-page="calendar">📅 달력 보기</a>
+      <a href="#" class="nav-item" data-page="transactions">📋 거래 내역</a>
+      <a href="#" class="nav-item" data-page="budget">💰 예산 관리</a>
+      <a href="#" class="nav-item" data-page="reports">📊 리포트</a>
+      <a href="#" class="nav-item" data-page="settings">⚙️ 설정</a>
+    </div>
+    <div class="sidebar-summary">
+      <h3>이번 달 요약</h3>
+      <div class="summary-item">
+        <span>총 지출</span>
+        <span id="sidebar-total">0원</span>
+      </div>
+      <div class="summary-item">
+        <span>일평균</span>
+        <span id="sidebar-average">0원</span>
+      </div>
+      <div class="summary-item">
+        <span>최고액</span>
+        <span id="sidebar-max">0원</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 메인 콘텐츠 -->
+  <main class="main-content">
+    <!-- 상단 헤더 -->
+    <header class="main-header">
+      <button class="menu-toggle" id="menu-toggle">☰</button>
+      <h1>스마트 식비 가계부</h1>
+      <div class="header-actions">
+        <button class="add-expense-btn">+ 지출 추가</button>
       </div>
     </header>
+
+    <!-- 페이지 컨테이너 -->
+    <div class="page-container">
+      <!-- 달력 페이지 -->
+      <div id="calendar-page" class="page active">
+        <div class="calendar-header">
+          <button id="prev-month" class="nav-btn">&lt;</button>
+          <h2 id="current-month-year">2025년 5월</h2>
+          <button id="next-month" class="nav-btn">&gt;</button>
+        </div>
+        
+        <div class="calendar-container">
+          <div class="weekdays">
+            <div class="weekday sun">일</div>
+            <div class="weekday">월</div>
+            <div class="weekday">화</div>
+            <div class="weekday">수</div>
+            <div class="weekday">목</div>
+            <div class="weekday">금</div>
+            <div class="weekday sat">토</div>
+          </div>
+          
+          <div id="calendar-grid" class="calendar-grid">
+            <!-- JavaScript에서 동적 생성 -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 거래 내역 페이지 -->
+      <div id="transactions-page" class="page">
+        <h2>거래 내역</h2>
+        <div class="transaction-filters">
+          <input type="date" id="date-filter" placeholder="날짜 필터">
+          <select id="category-filter">
+            <option value="">전체 카테고리</option>
+            <option value="식료품">식료품</option>
+            <option value="외식">외식</option>
+            <option value="카페">카페</option>
+            <option value="배달">배달</option>
+          </select>
+          <button class="clear-filter-btn">필터 초기화</button>
+        </div>
+        
+        <div class="transaction-list" id="transaction-list">
+          <div class="transaction-item sample">
+            <div class="transaction-date">2025-05-23</div>
+            <div class="transaction-category">외식</div>
+            <div class="transaction-amount">25,000원</div>
+            <div class="transaction-actions">
+              <button class="edit-btn">수정</button>
+              <button class="delete-btn">삭제</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 예산 관리 페이지 -->
+      <div id="budget-page" class="page">
+        <h2>예산 관리</h2>
+        <div class="budget-container">
+          <div class="budget-input">
+            <label for="monthly-budget">월간 식비 예산</label>
+            <input type="number" id="monthly-budget" placeholder="예산 금액 입력">
+            <button class="save-budget-btn">저장</button>
+          </div>
+          
+          <div class="budget-progress">
+            <h3>예산 사용 현황</h3>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="budget-info">
+              <span>사용: <span id="used-budget">0원</span></span>
+              <span>남은 예산: <span id="remaining-budget">0원</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 리포트 페이지 -->
+      <div id="reports-page" class="page">
+        <h2>소비 리포트</h2>
+        <div class="report-container">
+          <div class="report-card">
+            <h3>월별 통계</h3>
+            <div class="stat-item">
+              <span>평균 일일 지출</span>
+              <span id="daily-average">0원</span>
+            </div>
+            <div class="stat-item">
+              <span>최고 지출일</span>
+              <span id="max-day">-</span>
+            </div>
+            <div class="stat-item">
+              <span>지출 없는 날</span>
+              <span id="no-expense-days">0일</span>
+            </div>
+          </div>
+          
+          <div class="report-card">
+            <h3>카테고리별 분석</h3>
+            <div class="category-breakdown" id="category-breakdown">
+              <!-- 동적 생성 -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 설정 페이지 -->
+      <!-- settings-page 기존 코드를 다음으로 교체 -->
+<div id="settings-page" class="page">
+  <h2>설정</h2>
+  <div class="settings-container">
+    <div class="setting-group">
+      <h3>알림 설정</h3>
+      <div class="switch-container">
+        <label class="switch">
+          <input type="checkbox" id="daily-reminder">
+          <span class="slider"></span>
+        </label>
+        <span class="switch-label">일일 지출 알림</span>
+      </div>
+      <div class="switch-container">
+        <label class="switch">
+          <input type="checkbox" id="budget-alert">
+          <span class="slider"></span>
+        </label>
+        <span class="switch-label">예산 초과 경고</span>
+      </div>
+    </div>
     
-    <main class="calendar-container">
-      <div class="weekdays">
-        <div class="weekday sun">일</div>
-        <div class="weekday">월</div>
-        <div class="weekday">화</div>
-        <div class="weekday">수</div>
-        <div class="weekday">목</div>
-        <div class="weekday">금</div>
-        <div class="weekday sat">토</div>
+    <div class="setting-group">
+      <h3>데이터 관리</h3>
+      <div class="data-management-buttons">
+        <button class="export-btn">📤 데이터 내보내기</button>
+        <button class="import-btn">📥 데이터 가져오기</button>
+        <button class="reset-btn danger">⚠️ 전체 초기화</button>
       </div>
-      
-      <div id="calendar-grid" class="calendar-grid">
-        <!-- JavaScript에서 동적으로 날짜와 금액이 채워질 부분 -->
+    </div>
+  </div>
+</div>
+
+  </main>
+
+  <!-- 지출 추가 모달 -->
+  <div class="modal" id="expense-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>지출 추가</h3>
+        <button class="modal-close">&times;</button>
       </div>
-    </main>
-    
-    <footer class="footer">
-      <div class="monthly-summary">
-        <p>이번 달 총 식비: <span id="total-expense">0</span>원</p>
-        <p>일평균 식비: <span id="average-expense">0</span>원</p>
-        <p>최고 지출일: <span id="max-expense-date">-</span> (<span id="max-expense">0</span>원)</p>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>날짜</label>
+          <input type="date" id="expense-date">
+        </div>
+        <div class="form-group">
+          <label>금액</label>
+          <input type="number" id="expense-amount" placeholder="금액 입력">
+        </div>
+        <div class="form-group">
+          <label>카테고리</label>
+          <select id="expense-category">
+            <option value="식료품">식료품</option>
+            <option value="외식">외식</option>
+            <option value="카페">카페</option>
+            <option value="배달">배달</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>메모</label>
+          <input type="text" id="expense-memo" placeholder="메모 (선택사항)">
+        </div>
       </div>
-    </footer>
+      <div class="modal-footer">
+        <button class="cancel-btn">취소</button>
+        <button class="save-btn">저장</button>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
