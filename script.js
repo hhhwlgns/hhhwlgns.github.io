@@ -28,53 +28,53 @@ document.addEventListener('DOMContentLoaded', function() {
   // 확장된 샘플 데이터 (6월 1일~13일)
   const sampleExpenses = [
     // 6월 1일
-    { date: '2025-06-01', store: '롯데마트', originalAmount: 45000, amount: 45000, category: '식료품', isDutch: false, peopleCount: 1, memo: '일주일치 장보기' },
+    { date: '2025-06-01', store: '이모즉석떡볶이', originalAmount: 45000, amount: 45000, category: '외식', isDutch: false, peopleCount: 1, memo: '일주일치 장보기' },
     
     // 6월 2일
-    { date: '2025-06-02', store: '스타벅스', originalAmount: 24000, amount: 8000, category: '카페', isDutch: true, peopleCount: 3, memo: '친구들과 커피' },
-    { date: '2025-06-02', store: '맥도날드', originalAmount: 18000, amount: 18000, category: '외식', isDutch: false, peopleCount: 1, memo: '점심' },
+    { date: '2025-06-02', store: '가메이', originalAmount: 24000, amount: 8000, category: '외식', isDutch: true, peopleCount: 3, memo: '친구들과 커피' },
+    { date: '2025-06-02', store: '궁중보쌈', originalAmount: 18000, amount: 18000, category: '외식', isDutch: false, peopleCount: 1, memo: '점심' },
     
     // 6월 3일
-    { date: '2025-06-03', store: '이디야커피', originalAmount: 15000, amount: 7500, category: '카페', isDutch: true, peopleCount: 2, memo: '스터디 모임' },
+    { date: '2025-06-03', store: '닭살부부', originalAmount: 15000, amount: 7500, category: '외식', isDutch: true, peopleCount: 2, memo: '스터디 모임' },
     
     // 6월 4일
-    { date: '2025-06-04', store: '배달의민족', originalAmount: 36000, amount: 9000, category: '배달', isDutch: true, peopleCount: 4, memo: '치킨 회식' },
-    { date: '2025-06-04', store: '편의점', originalAmount: 3500, amount: 3500, category: '식료품', isDutch: false, peopleCount: 1, memo: '간식' },
+    { date: '2025-06-04', store: '금산양꼬치', originalAmount: 36000, amount: 9000, category: '외식', isDutch: true, peopleCount: 4, memo: '치킨 회식' },
+    { date: '2025-06-04', store: '메가커피', originalAmount: 3500, amount: 3500, category: '외식', isDutch: false, peopleCount: 1, memo: '간식' },
     
     // 6월 5일
-    { date: '2025-06-05', store: '이마트', originalAmount: 32000, amount: 32000, category: '식료품', isDutch: false, peopleCount: 1, memo: '냉장고 채우기' },
+    { date: '2025-06-05', store: '구름카츠', originalAmount: 32000, amount: 32000, category: '외식', isDutch: false, peopleCount: 1, memo: '냉장고 채우기' },
     
     // 6월 6일
-    { date: '2025-06-06', store: '투썸플레이스', originalAmount: 18000, amount: 9000, category: '카페', isDutch: true, peopleCount: 2, memo: '데이트' },
-    { date: '2025-06-06', store: '한식당', originalAmount: 45000, amount: 15000, category: '외식', isDutch: true, peopleCount: 3, memo: '가족 저녁' },
+    { date: '2025-06-06', store: '인하칼국수', originalAmount: 18000, amount: 9000, category: '외식', isDutch: true, peopleCount: 2, memo: '데이트' },
+    { date: '2025-06-06', store: '미식당', originalAmount: 45000, amount: 15000, category: '외식', isDutch: true, peopleCount: 3, memo: '가족 저녁' },
     
     // 6월 7일
-    { date: '2025-06-07', store: '한솥도시락', originalAmount: 8000, amount: 8000, category: '외식', isDutch: false, peopleCount: 1, memo: '간단한 점심' },
+    { date: '2025-06-07', store: '커리야', originalAmount: 8000, amount: 8000, category: '외식', isDutch: false, peopleCount: 1, memo: '간단한 점심' },
     
     // 6월 8일
-    { date: '2025-06-08', store: '쿠팡이츠', originalAmount: 28000, amount: 7000, category: '배달', isDutch: true, peopleCount: 4, memo: '회사 점심 주문' },
-    { date: '2025-06-08', store: '카페베네', originalAmount: 12000, amount: 6000, category: '카페', isDutch: true, peopleCount: 2, memo: '업무 미팅' },
+    { date: '2025-06-08', store: '성수완당', originalAmount: 28000, amount: 7000, category: '외식', isDutch: true, peopleCount: 4, memo: '회사 점심 주문' },
+    { date: '2025-06-08', store: '면식당', originalAmount: 12000, amount: 6000, category: '외식', isDutch: true, peopleCount: 2, memo: '업무 미팅' },
     
     // 6월 9일
-    { date: '2025-06-09', store: '홈플러스', originalAmount: 55000, amount: 55000, category: '식료품', isDutch: false, peopleCount: 1, memo: '대용량 구매' },
+    { date: '2025-06-09', store: '킹콩순두부', originalAmount: 55000, amount: 55000, category: '외식', isDutch: false, peopleCount: 1, memo: '대용량 구매' },
     
     // 6월 10일
-    { date: '2025-06-10', store: '버거킹', originalAmount: 12000, amount: 12000, category: '외식', isDutch: false, peopleCount: 1, memo: '혼자 저녁' },
-    { date: '2025-06-10', store: '요기요', originalAmount: 32000, amount: 16000, category: '배달', isDutch: true, peopleCount: 2, memo: '야식 주문' },
+    { date: '2025-06-10', store: '인하각', originalAmount: 12000, amount: 12000, category: '외식', isDutch: false, peopleCount: 1, memo: '혼자 저녁' },
+    { date: '2025-06-10', store: '시카고피자', originalAmount: 32000, amount: 16000, category: '외식', isDutch: true, peopleCount: 2, memo: '야식 주문' },
     
     // 6월 11일
-    { date: '2025-06-11', store: '파리바게뜨', originalAmount: 8500, amount: 8500, category: '식료품', isDutch: false, peopleCount: 1, memo: '아침식사' },
-    { date: '2025-06-11', store: '중국집', originalAmount: 42000, amount: 10500, category: '외식', isDutch: true, peopleCount: 4, memo: '팀 회식' },
+    { date: '2025-06-11', store: '매운애갈비찜', originalAmount: 8500, amount: 8500, category: '외식', isDutch: false, peopleCount: 1, memo: '아침식사' },
+    { date: '2025-06-11', store: '온뚝', originalAmount: 42000, amount: 10500, category: '외식', isDutch: true, peopleCount: 4, memo: '팀 회식' },
     
     // 6월 12일
-    { date: '2025-06-12', store: 'GS25', originalAmount: 5000, amount: 5000, category: '식료품', isDutch: false, peopleCount: 1, memo: '음료수' },
-    { date: '2025-06-12', store: '빕스', originalAmount: 60000, amount: 20000, category: '외식', isDutch: true, peopleCount: 3, memo: '가족 외식' },
-    { date: '2025-06-12', store: '할리스', originalAmount: 14000, amount: 7000, category: '카페', isDutch: true, peopleCount: 2, memo: '오후 커피' },
+    { date: '2025-06-12', store: '동아리닭갈비', originalAmount: 5000, amount: 5000, category: '외식', isDutch: false, peopleCount: 1, memo: '음료수' },
+    { date: '2025-06-12', store: '알촌', originalAmount: 60000, amount: 20000, category: '외식', isDutch: true, peopleCount: 3, memo: '가족 외식' },
+    { date: '2025-06-12', store: '미식당', originalAmount: 14000, amount: 7000, category: '외식', isDutch: true, peopleCount: 2, memo: '오후 커피' },
     
     // 6월 13일
-    { date: '2025-06-13', store: '김밥천국', originalAmount: 15000, amount: 15000, category: '외식', isDutch: false, peopleCount: 1, memo: '점심' },
-    { date: '2025-06-13', store: '배민', originalAmount: 25000, amount: 8333, category: '배달', isDutch: true, peopleCount: 3, memo: '저녁 배달' },
-    { date: '2025-06-13', store: '세븐일레븐', originalAmount: 3000, amount: 3000, category: '식료품', isDutch: false, peopleCount: 1, memo: '간식' }
+    { date: '2025-06-13', store: '궁중보쌈', originalAmount: 15000, amount: 15000, category: '외식', isDutch: false, peopleCount: 1, memo: '점심' },
+    { date: '2025-06-13', store: '춘리마라탕', originalAmount: 25000, amount: 8333, category: '외식', isDutch: true, peopleCount: 3, memo: '저녁 배달' },
+    { date: '2025-06-13', store: '인하각', originalAmount: 3000, amount: 3000, category: '외식', isDutch: false, peopleCount: 1, memo: '간식' }
   ];
   
   // 샘플 데이터 로드
