@@ -124,6 +124,36 @@ body {
   background: #f0f0f0;
 }
 
+/* 헤더 액션 버튼들 */
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.demo-dutch-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.demo-dutch-btn:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.demo-dutch-btn:active {
+  transform: translateY(0);
+}
+
 .add-expense-btn {
   background: #3c40c6;
   color: white;
@@ -223,7 +253,7 @@ body {
 
 .date-cell {
   position: relative;
-  min-height: 80px;
+  min-height: 100px;
   border-radius: 8px;
   padding: 10px;
   background: #f9f9f9;
@@ -269,9 +299,19 @@ body {
 
 .expense-amount {
   color: #e74c3c;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.9rem;
   margin-top: auto;
+  text-align: right;
+  padding: 4px 0;
+  border-top: 1px dashed #ddd;
+}
+
+.expense-dutch {
+  color: #28a745;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 2px;
   text-align: right;
 }
 
@@ -281,6 +321,57 @@ body {
   font-style: italic;
   margin-top: auto;
   text-align: center;
+}
+
+.expense-count {
+  color: #6c757d;
+  font-size: 0.7rem;
+  text-align: center;
+  margin-top: 2px;
+}
+
+/* 거래내역 헤더 */
+.transactions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.transaction-summary {
+  display: flex;
+  gap: 1rem;
+}
+
+.summary-card {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 150px;
+}
+
+.summary-card span:first-child {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.total-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+.savings-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #28a745;
 }
 
 /* 거래 내역 페이지 */
@@ -319,7 +410,7 @@ body {
 
 .transaction-item {
   display: grid;
-  grid-template-columns: 120px 100px 120px 1fr;
+  grid-template-columns: 100px 150px 120px 100px 100px 1fr;
   gap: 1rem;
   padding: 1rem;
   border-bottom: 1px solid #eee;
@@ -328,6 +419,55 @@ body {
 
 .transaction-item:last-child {
   border-bottom: none;
+}
+
+.transaction-date {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.transaction-store {
+  font-weight: 500;
+}
+
+.transaction-original-amount {
+  color: #6c757d;
+  font-size: 0.9rem;
+  text-decoration: line-through;
+}
+
+.transaction-final-amount {
+  font-weight: 600;
+  color: #e74c3c;
+  font-size: 1rem;
+}
+
+.transaction-category {
+  background: #e3f2fd;
+  color: #3c40c6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.transaction-dutch-badge {
+  background: #d4edda;
+  color: #155724;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.transaction-normal-badge {
+  background: #f8f9fa;
+  color: #6c757d;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-align: center;
 }
 
 .transaction-actions {
@@ -464,7 +604,7 @@ body {
 }
 
 .setting-group h3 {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   color: #3c40c6;
 }
 
@@ -514,18 +654,68 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-.export-btn, .import-btn, .reset-btn {
-  margin: 0.5rem 0.5rem 0.5rem 0;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
+/* 데이터 관리 버튼들 */
+.data-management-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 300px;
 }
 
-.export-btn { background: #28a745; color: white; }
-.import-btn { background: #17a2b8; color: white; }
-.reset-btn.danger { background: #dc3545; color: white; }
+.export-btn, .import-btn, .reset-btn {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.export-btn { 
+  background: #28a745; 
+  color: white; 
+}
+
+.export-btn:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
+.import-btn { 
+  background: #17a2b8; 
+  color: white; 
+}
+
+.import-btn:hover {
+  background: #138496;
+  transform: translateY(-2px);
+}
+
+.reset-btn.danger { 
+  background: #dc3545; 
+  color: white; 
+}
+
+.reset-btn.danger:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+}
+
+/* 스위치 정렬 개선 */
+.switch-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.switch-label {
+  font-weight: 500;
+  color: #333;
+}
 
 /* 모달 */
 .modal {
@@ -618,8 +808,187 @@ input:checked + .slider:before {
   color: white;
 }
 
+/* 더치페이 모달 스타일 */
+.dutch-modal-content {
+  max-width: 450px;
+}
+
+.dutch-question {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.payment-preview {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.original-amount {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  color: #495057;
+}
+
+.dutch-options {
+  margin-top: 1rem;
+}
+
+.dutch-info {
+  background: #e3f2fd;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 2px solid #3c40c6;
+}
+
+.people-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.people-btn {
+  background: #3c40c6;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.people-btn:hover {
+  background: #575fcf;
+  transform: scale(1.1);
+}
+
+#dutch-people-count {
+  width: 80px;
+  text-align: center;
+  padding: 0.5rem;
+  border: 2px solid #3c40c6;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.dutch-preview {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #bee5eb;
+}
+
+.my-amount, .savings-preview {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+}
+
+.highlight-amount {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #28a745;
+}
+
+.savings-text {
+  font-weight: 600;
+  color: #17a2b8;
+}
+
+.dutch-no-btn, .dutch-yes-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.dutch-no-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.dutch-no-btn:hover {
+  background: #5a6268;
+}
+
+.dutch-yes-btn {
+  background: #28a745;
+  color: white;
+}
+
+.dutch-yes-btn:hover {
+  background: #218838;
+}
+
+/* 일별 상세 모달 */
+.daily-expense-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.daily-expense-item:last-child {
+  border-bottom: none;
+}
+
+.expense-store-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.expense-original-amount {
+  color: #6c757d;
+  font-size: 0.9rem;
+  text-decoration: line-through;
+}
+
+.expense-final-amount {
+  font-weight: 600;
+  color: #e74c3c;
+}
+
+.dutch-badge {
+  background: #d4edda;
+  color: #155724;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  margin-left: 0.5rem;
+}
+
+.daily-total {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: #3c40c6;
+}
+
 /* 반응형 */
 @media (max-width: 768px) {
+  .header-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .demo-dutch-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
   .page-container {
     padding: 1rem;
   }
@@ -629,7 +998,7 @@ input:checked + .slider:before {
   }
   
   .date-cell {
-    min-height: 60px;
+    min-height: 80px;
     padding: 5px;
   }
   
@@ -641,31 +1010,129 @@ input:checked + .slider:before {
   .report-container {
     grid-template-columns: 1fr;
   }
+  
+  .transactions-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .transaction-summary {
+    justify-content: space-between;
+  }
+  
+  .people-selector {
+    justify-content: center;
+  }
 }
 
-/* 기존 코드 하단에 다음 내용 추가 */
+/* 기존 CSS 코드는 그대로 유지하고, 아래 스타일들을 추가 */
 
-/* 설정 페이지 버튼 정렬 수정 */
-.data-management-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-  max-width: 300px;
-}
-
-.export-btn, .import-btn, .reset-btn {
-  width: 100%;
-  padding: 1rem;
+/* 거래 선택 리스트 */
+.transaction-select-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
+  margin-top: 1rem;
 }
 
-/* 스위치 정렬 개선 */
-.switch-container {
+.transaction-select-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  margin: 1rem 0;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.transaction-select-item:hover {
+  background-color: #f8f9fa;
+}
+
+.transaction-select-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-select-item.selected {
+  background-color: #e3f2fd;
+  border-left: 4px solid #3c40c6;
+}
+
+.transaction-select-info {
+  flex: 1;
+}
+
+.transaction-select-store {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.transaction-select-category {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.transaction-select-amount {
+  font-weight: 600;
+  color: #e74c3c;
+  font-size: 1.1rem;
+}
+
+.transaction-select-dutch {
+  background: #d4edda;
+  color: #155724;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+}
+
+.no-transactions {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+  font-style: italic;
+}
+
+/* 인원수 입력 필드 개선 */
+#dutch-people-count {
+  width: 80px;
+  text-align: center;
+  padding: 0.5rem;
+  border: 2px solid #3c40c6;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background: white;
+  color: #3c40c6;
+}
+
+#dutch-people-count:focus {
+  outline: none;
+  border-color: #575fcf;
+  box-shadow: 0 0 0 3px rgba(60, 64, 198, 0.1);
+}
+
+/* 더치페이 정보 항상 표시 */
+.dutch-info {
+  background: #e3f2fd;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 2px solid #3c40c6;
+  display: block !important;
+}
+
+/* 반응형 개선 */
+@media (max-width: 768px) {
+  .transaction-select-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .transaction-select-amount {
+    align-self: flex-end;
+  }
 }
