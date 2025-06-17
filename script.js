@@ -603,17 +603,74 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 리포트 렌더링
   function renderReports() {
-    const currentMonthData = getCurrentMonthData();
-    
-    document.getElementById('report-total').textContent = currentMonthData.totalAmount.toLocaleString() + '원';
-    document.getElementById('report-dutch-saved').textContent = currentMonthData.dutchSaved.toLocaleString() + '원';
-    document.getElementById('dutch-count').textContent = currentMonthData.dutchCount + '건';
-    document.getElementById('total-count').textContent = currentMonthData.totalCount + '건';
-    document.getElementById('dutch-ratio').textContent = currentMonthData.totalCount > 0 ? 
-      Math.round(currentMonthData.dutchCount / currentMonthData.totalCount * 100) + '%' : '0%';
-    document.getElementById('daily-average').textContent = 
-      Math.round(currentMonthData.totalAmount / new Date().getDate()).toLocaleString() + '원';
+    const data = getCurrentMonthData();
+    // 기존 통계 업데이트
+    document.getElementById('report-total').textContent       = data.totalAmount.toLocaleString() + '원';
+    document.getElementById('report-dutch-saved').textContent = data.dutchSaved.toLocaleString() + '원';
+    document.getElementById('dutch-count').textContent        = data.dutchCount + '건';
+    document.getElementById('total-count').textContent        = data.totalCount + '건';
+    document.getElementById('dutch-ratio').textContent        = data.totalCount > 0
+      ? Math.round(data.dutchCount / data.totalCount * 100) + '%' : '0%';
+    document.getElementById('daily-average').textContent      = 
+      Math.round(data.totalAmount / new Date().getDate()).toLocaleString() + '원';
+
+    renderPieChart();
   }
+
+  // 파이차트 생성
+  function renderPieChart() {
+    const ctx = document.getElementById('category-pie-chart');
+    if (!ctx) return;
+
+    // 기존 인스턴스 파괴
+    if (ctx.chart) {
+      ctx.chart.destroy();
+    }
+
+    // 임의 비율 데이터: 식비40, 생활비30, 교통비10, 기타20
+    const data = {
+      labels: ['식비','생활비','교통비','기타'],
+      datasets: [{
+        data: [40,30,10,20],
+        backgroundColor: ['#3c40c6','#28a745','#3498db','#e74c3c'],
+        borderWidth: 2
+      }]
+    };
+
+    const options = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { boxWidth:20, padding:15 }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const total = ctx.dataset.data.reduce((s,v)=>s+v,0);
+              const pct = ((ctx.raw/total)*100).toFixed(1);
+              return `${ctx.label}: ${ctx.raw}% (${pct}%)`;
+            }
+          }
+        }
+      }
+    };
+
+    ctx.chart = new Chart(ctx, { type:'pie', data, options });
+  }
+
+  // 리포트 페이지 활성 시 실행
+  navItems.forEach(item => {
+    if (item.getAttribute('data-page') === 'reports') {
+      item.addEventListener('click', () => renderReports());
+    }
+  });
+
+  // 초기 달력 렌더링 수행 후 통계 등 초기화
+  renderCalendar();
+  renderReports();
+
+
   
   // 현재 월 데이터 계산
   function getCurrentMonthData() {
