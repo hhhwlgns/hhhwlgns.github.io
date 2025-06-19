@@ -1,750 +1,788 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // 현재 날짜 정보
-  const today = new Date();
-  let currentMonth = today.getMonth();
-  let currentYear = today.getFullYear();
-  
-  // 데이터 저장소
-  let expenseData = {};
-  let selectedTransactionForDutch = null;
-  
-  // DOM 요소들
-  const sidebar = document.getElementById('sidebar');
-  const menuToggle = document.getElementById('menu-toggle');
-  const closeBtn = document.getElementById('close-btn');
-  const navItems = document.querySelectorAll('.nav-item');
-  const pages = document.querySelectorAll('.page');
-  const calendarGrid = document.getElementById('calendar-grid');
-  const currentMonthYear = document.getElementById('current-month-year');
-  const prevMonthBtn = document.getElementById('prev-month');
-  const nextMonthBtn = document.getElementById('next-month');
-  const expenseModal = document.getElementById('expense-modal');
-  const dutchConfirmModal = document.getElementById('dutch-confirm-modal');
-  const dutchTransactionModal = document.getElementById('dutch-transaction-modal');
-  const dailyDetailModal = document.getElementById('daily-detail-modal');
-  const addExpenseBtn = document.querySelector('.add-expense-btn');
-  const demoDutchBtn = document.querySelector('.demo-dutch-btn');
-  
-  // 확장된 샘플 데이터 (6월 1일~13일)
-  const sampleExpenses = [
-    // 6월 1일
-    { date: '2025-06-01', store: '이모즉석떡볶이', originalAmount: 45000, amount: 45000, category: '외식', isDutch: false, peopleCount: 1, memo: '일주일치 장보기' },
-    
-    // 6월 2일
-    { date: '2025-06-02', store: '가메이', originalAmount: 24000, amount: 8000, category: '외식', isDutch: true, peopleCount: 3, memo: '친구들과 커피' },
-    { date: '2025-06-02', store: '궁중보쌈', originalAmount: 18000, amount: 18000, category: '외식', isDutch: false, peopleCount: 1, memo: '점심' },
-    
-    // 6월 3일
-    { date: '2025-06-03', store: '닭살부부', originalAmount: 15000, amount: 7500, category: '외식', isDutch: true, peopleCount: 2, memo: '스터디 모임' },
-    
-    // 6월 4일
-    { date: '2025-06-04', store: '금산양꼬치', originalAmount: 36000, amount: 9000, category: '외식', isDutch: true, peopleCount: 4, memo: '치킨 회식' },
-    { date: '2025-06-04', store: '메가커피', originalAmount: 3500, amount: 3500, category: '외식', isDutch: false, peopleCount: 1, memo: '간식' },
-    
-    // 6월 5일
-    { date: '2025-06-05', store: '구름카츠', originalAmount: 32000, amount: 32000, category: '외식', isDutch: false, peopleCount: 1, memo: '냉장고 채우기' },
-    
-    // 6월 6일
-    { date: '2025-06-06', store: '인하칼국수', originalAmount: 18000, amount: 9000, category: '외식', isDutch: true, peopleCount: 2, memo: '데이트' },
-    { date: '2025-06-06', store: '미식당', originalAmount: 45000, amount: 15000, category: '외식', isDutch: true, peopleCount: 3, memo: '가족 저녁' },
-    
-    // 6월 7일
-    { date: '2025-06-07', store: '커리야', originalAmount: 8000, amount: 8000, category: '외식', isDutch: false, peopleCount: 1, memo: '간단한 점심' },
-    
-    // 6월 8일
-    { date: '2025-06-08', store: '성수완당', originalAmount: 28000, amount: 7000, category: '외식', isDutch: true, peopleCount: 4, memo: '회사 점심 주문' },
-    { date: '2025-06-08', store: '면식당', originalAmount: 12000, amount: 6000, category: '외식', isDutch: true, peopleCount: 2, memo: '업무 미팅' },
-    
-    // 6월 9일
-    { date: '2025-06-09', store: '킹콩순두부', originalAmount: 55000, amount: 55000, category: '외식', isDutch: false, peopleCount: 1, memo: '대용량 구매' },
-    
-    // 6월 10일
-    { date: '2025-06-10', store: '인하각', originalAmount: 12000, amount: 12000, category: '외식', isDutch: false, peopleCount: 1, memo: '혼자 저녁' },
-    { date: '2025-06-10', store: '시카고피자', originalAmount: 32000, amount: 16000, category: '외식', isDutch: true, peopleCount: 2, memo: '야식 주문' },
-    
-    // 6월 11일
-    { date: '2025-06-11', store: '매운애갈비찜', originalAmount: 8500, amount: 8500, category: '외식', isDutch: false, peopleCount: 1, memo: '아침식사' },
-    { date: '2025-06-11', store: '온뚝', originalAmount: 42000, amount: 10500, category: '외식', isDutch: true, peopleCount: 4, memo: '팀 회식' },
-    
-    // 6월 12일
-    { date: '2025-06-12', store: '동아리닭갈비', originalAmount: 5000, amount: 5000, category: '외식', isDutch: false, peopleCount: 1, memo: '음료수' },
-    { date: '2025-06-12', store: '알촌', originalAmount: 60000, amount: 20000, category: '외식', isDutch: true, peopleCount: 3, memo: '가족 외식' },
-    { date: '2025-06-12', store: '미식당', originalAmount: 14000, amount: 7000, category: '외식', isDutch: true, peopleCount: 2, memo: '오후 커피' },
-    
-    // 6월 13일
-    { date: '2025-06-13', store: '궁중보쌈', originalAmount: 15000, amount: 15000, category: '외식', isDutch: false, peopleCount: 1, memo: '점심' },
-    { date: '2025-06-13', store: '춘리마라탕', originalAmount: 25000, amount: 8333, category: '외식', isDutch: true, peopleCount: 3, memo: '저녁 배달' },
-    { date: '2025-06-13', store: '인하각', originalAmount: 3000, amount: 3000, category: '외식', isDutch: false, peopleCount: 1, memo: '간식' }
-  ];
-  
-  // 샘플 데이터 로드
-  sampleExpenses.forEach(expense => {
-    if (!expenseData[expense.date]) {
-      expenseData[expense.date] = [];
-    }
-    expenseData[expense.date].push(expense);
-  });
-  
-  const monthNames = [
-    '1월', '2월', '3월', '4월', '5월', '6월',
-    '7월', '8월', '9월', '10월', '11월', '12월'
-  ];
-  
-  // 이벤트 리스너 등록
-  function initEventListeners() {
-    // 사이드바 토글
-    menuToggle.addEventListener('click', () => sidebar.classList.add('active'));
-    closeBtn.addEventListener('click', () => sidebar.classList.remove('active'));
-    
-    // 사이드바 외부 클릭시 닫기
-    document.addEventListener('click', function(e) {
-      if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-        sidebar.classList.remove('active');
-      }
-    });
-    
-    // 페이지 전환
-    navItems.forEach(item => {
-      item.addEventListener('click', function(e) {
-        e.preventDefault();
-        const targetPage = this.getAttribute('data-page');
-        
-        navItems.forEach(nav => nav.classList.remove('active'));
-        this.classList.add('active');
-        
-        pages.forEach(page => page.classList.remove('active'));
-        document.getElementById(targetPage + '-page').classList.add('active');
-        
-        if (targetPage === 'transactions') renderTransactions();
-        else if (targetPage === 'reports') renderReports();
-        
-        if (window.innerWidth <= 768) sidebar.classList.remove('active');
-      });
-    });
-    
-    // 달력 네비게이션
-    prevMonthBtn.addEventListener('click', () => {
-      currentMonth--;
-      if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-      }
-      renderCalendar();
-    });
-    
-    nextMonthBtn.addEventListener('click', () => {
-      currentMonth++;
-      if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-      }
-      renderCalendar();
-    });
-    
-    // 지출 추가 모달
-    addExpenseBtn.addEventListener('click', () => {
-      expenseModal.classList.add('active');
-      document.getElementById('expense-date').value = formatDate(today);
-    });
-    
-    document.querySelector('.modal-close').addEventListener('click', () => {
-      expenseModal.classList.remove('active');
-    });
-    
-    document.querySelector('.cancel-btn').addEventListener('click', () => {
-      expenseModal.classList.remove('active');
-    });
-    
-    // 저장 버튼 - 새 지출 추가 시 더치페이 확인
-    document.querySelector('.save-btn').addEventListener('click', () => {
-      const amount = document.getElementById('expense-amount').value;
-      const store = document.getElementById('expense-store').value;
-      
-      if (!amount || !store) {
-        alert('필수 정보를 입력해주세요.');
-        return;
-      }
-      
-      expenseModal.classList.remove('active');
-      showDutchConfirmModal(parseInt(amount), 'new');
-    });
-    
-    // 더치페이 버튼 - 기존 거래 선택
-    demoDutchBtn.addEventListener('click', () => {
-      showDutchTransactionModal();
-    });
-    
-    // 더치페이 거래 선택 모달
-    document.getElementById('dutch-transaction-close').addEventListener('click', () => {
-      dutchTransactionModal.classList.remove('active');
-    });
-    
-    // 날짜 선택 시 거래 목록 업데이트
-    document.getElementById('dutch-date-select').addEventListener('change', function() {
-      const selectedDate = this.value;
-      renderTransactionSelectList(selectedDate);
-    });
-    
-    // 더치페이 확인 모달 이벤트
-    document.getElementById('dutch-close-btn').addEventListener('click', () => {
-      dutchConfirmModal.classList.remove('active');
-    });
-    
-    // 인원수 조절 버튼 (1씩 증감)
-    document.querySelectorAll('.people-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const countInput = document.getElementById('dutch-people-count');
-        const currentCount = parseInt(countInput.value) || 2;
-        
-        if (this.dataset.count === 'plus' && currentCount < 10) {
-          countInput.value = currentCount + 1;
-        } else if (this.dataset.count === 'minus' && currentCount > 2) {
-          countInput.value = currentCount - 1;
+    // 현재 날짜 정보
+    const today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+
+    // 데이터 저장소
+    let expenseData = {};
+    let selectedTransactionForDutch = null;
+    let currentTransaction = null;
+
+    // DOM 요소들
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeBtn = document.getElementById('close-btn');
+    const navItems = document.querySelectorAll('.nav-item');
+    const pages = document.querySelectorAll('.page');
+    const calendarGrid = document.getElementById('calendar-grid');
+    const currentMonthYear = document.getElementById('current-month-year');
+    const prevMonthBtn = document.getElementById('prev-month');
+    const nextMonthBtn = document.getElementById('next-month');
+    const expenseModal = document.getElementById('expense-modal');
+    const dutchConfirmModal = document.getElementById('dutch-confirm-modal');
+    const dutchTransactionModal = document.getElementById('dutch-transaction-modal');
+    const dailyDetailModal = document.getElementById('daily-detail-modal');
+    const addExpenseBtn = document.querySelector('.add-expense-btn');
+    const demoDutchBtn = document.querySelector('.demo-dutch-btn');
+
+    // 백엔드 API에서 받아올 샘플 데이터 구조 (date, store, originalAmount, avgPrice만 포함)
+    const sampleApiData = [
+        { date: '2025-06-01', store: '이모즉석떡볶이', originalAmount: 45000, avgPrice: 8500 },
+        { date: '2025-06-01', store: '가메이', originalAmount: 24000, avgPrice: 10000 },
+        { date: '2025-06-02', store: '궁중보쌈', originalAmount: 18000, avgPrice: 20000 },
+        { date: '2025-06-03', store: '닭살부부', originalAmount: 15000, avgPrice: 20000 },
+        { date: '2025-06-04', store: '금산양꼬치', originalAmount: 36000, avgPrice: 12000 },
+        { date: '2025-06-05', store: '메가커피', originalAmount: 3500, avgPrice: 5000 },
+        { date: '2025-06-06', store: '구름카츠', originalAmount: 32000, avgPrice: 14000 },
+        { date: '2025-06-07', store: '인하칼국수', originalAmount: 18000, avgPrice: 8000 },
+        { date: '2025-06-08', store: '미식당', originalAmount: 50000, avgPrice: 11000 },
+        { date: '2025-06-09', store: '커리야', originalAmount: 18500, avgPrice: 10000 },
+        { date: '2025-06-10', store: '성수완당', originalAmount: 15000, avgPrice: 10000 },
+        { date: '2025-06-11', store: '면식당', originalAmount: 6500, avgPrice: 8000 },
+        { date: '2025-06-12', store: '킹콩순두부', originalAmount: 28000, avgPrice: 15000 },
+        { date: '2025-06-13', store: '춘리마라탕', originalAmount: 12500, avgPrice: 8000 }
+    ];
+
+    // 샘플 데이터를 프론트엔드에서 처리하여 전체 거래 정보로 변환
+    sampleApiData.forEach(apiData => {
+        const transaction = processApiDataToTransaction(apiData, getCategoryByStore(apiData.store), '');
+        if (!expenseData[transaction.date]) {
+            expenseData[transaction.date] = [];
         }
+        expenseData[transaction.date].push(transaction);
+    });
+
+    const monthNames = [
+        '1월', '2월', '3월', '4월', '5월', '6월',
+        '7월', '8월', '9월', '10월', '11월', '12월'
+    ];
+
+    // API 데이터를 전체 거래 정보로 변환하는 함수
+    function processApiDataToTransaction(apiData, category = '기타', memo = '') {
+        // 더치페이 적용 여부 결정 (원금액이 평균가보다 크면서 랜덤하게 일부만 더치페이 적용)
+        const shouldApplyDutch = apiData.originalAmount > apiData.avgPrice && Math.random() > 0.5;
+        
+        if (shouldApplyDutch) {
+            const peopleCount = Math.floor(Math.random() * 4) + 2; // 2-5명 랜덤
+            return {
+                date: apiData.date,
+                store: apiData.store,
+                originalAmount: apiData.originalAmount,
+                avgPrice: apiData.avgPrice,
+                category: category,
+                isDutch: true,
+                peopleCount: peopleCount,
+                finalAmount: Math.round(apiData.originalAmount / peopleCount),
+                memo: memo
+            };
+        } else {
+            return {
+                date: apiData.date,
+                store: apiData.store,
+                originalAmount: apiData.originalAmount,
+                avgPrice: apiData.avgPrice,
+                category: category,
+                isDutch: false,
+                peopleCount: 1,
+                finalAmount: apiData.originalAmount,
+                memo: memo
+            };
+        }
+    }
+
+    // 가게명으로 카테고리 추정하는 함수
+    function getCategoryByStore(storeName) {
+        if (storeName.includes('버스') || storeName.includes('지하철') || storeName.includes('택시') || storeName.includes('역')) {
+            return '교통비';
+        } else if (storeName.includes('마트') || storeName.includes('쿠팡') || storeName.includes('올리브영') || storeName.includes('문구')) {
+            return '생활비';
+        } else if (storeName.includes('스타벅스') || storeName.includes('커피') || storeName.includes('김밥') || storeName.includes('치킨') || storeName.includes('마라탕') || storeName.includes('BHC') || storeName.includes('마켓컬리') || storeName.includes('스무디')) {
+            return '식비';
+        } else {
+            return '기타';
+        }
+    }
+
+    // 임시 함수: 가게 평균 가격 계산 (실제로는 API에서 받아옴)
+    function getStoreAvgPrice(storeName, amount) {
+        // 실제 구현에서는 이 부분이 API 호출 결과로 대체됩니다
+        const factor = 0.7 + Math.random() * 0.6; // 0.7 ~ 1.3
+        return Math.round(amount * factor);
+    }
+
+    // 이벤트 리스너 등록
+    function initEventListeners() {
+        // 사이드바 토글
+        menuToggle.addEventListener('click', () => sidebar.classList.add('active'));
+        closeBtn.addEventListener('click', () => sidebar.classList.remove('active'));
+
+        // 사이드바 외부 클릭시 닫기
+        document.addEventListener('click', function(e) {
+            if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // 페이지 전환
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetPage = this.getAttribute('data-page');
+                
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById(targetPage + '-page').classList.add('active');
+                
+                if (targetPage === 'transactions') renderTransactions();
+                else if (targetPage === 'reports') renderReports();
+                
+                if (window.innerWidth <= 768) sidebar.classList.remove('active');
+            });
+        });
+
+        // 달력 네비게이션
+        prevMonthBtn.addEventListener('click', () => {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        });
+
+        nextMonthBtn.addEventListener('click', () => {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        });
+
+        // 지출 추가 모달
+        addExpenseBtn.addEventListener('click', () => {
+            expenseModal.classList.add('active');
+            document.getElementById('expense-date').value = formatDate(today);
+        });
+
+        document.querySelector('.modal-close').addEventListener('click', () => {
+            expenseModal.classList.remove('active');
+        });
+
+        document.querySelector('.cancel-btn').addEventListener('click', () => {
+            expenseModal.classList.remove('active');
+        });
+
+        // 저장 버튼 - API 통합 처리
+        document.querySelector('.save-btn').addEventListener('click', () => {
+            const date = document.getElementById('expense-date').value;
+            const store = document.getElementById('expense-store').value;
+            const amount = parseInt(document.getElementById('expense-amount').value);
+            const category = document.getElementById('expense-category').value;
+            const memo = document.getElementById('expense-memo').value;
+
+            if (!date || !store || !amount) {
+                alert('필수 정보를 입력해주세요.');
+                return;
+            }
+
+            // 백엔드 API에서 평균 가격 정보 받아오기 (임시로 함수 호출)
+            const avgPrice = getStoreAvgPrice(store, amount);
+
+            // 새 거래 생성 (백엔드 API 형식)
+            const apiData = {
+                date: date,
+                store: store,
+                originalAmount: amount,
+                avgPrice: avgPrice
+            };
+
+            currentTransaction = {
+                date: date,
+                store: store,
+                originalAmount: amount,
+                avgPrice: avgPrice,
+            };
+
+            expenseModal.classList.remove('active');
+
+            // originalAmount가 avgPrice보다 크면 더치페이 확인
+            if (amount > avgPrice && document.getElementById('auto-dutch-check').checked) {
+                showDutchConfirmModal(currentTransaction);
+            } else {
+                addTransactionToData(currentTransaction);
+                renderCalendar();
+                updateSummary();
+                currentTransaction = null;
+            }
+        });
+
+        // 더치페이 버튼
+        demoDutchBtn.addEventListener('click', () => {
+            showDutchTransactionModal();
+        });
+
+        // 더치페이 거래 선택 모달
+        document.getElementById('dutch-transaction-close').addEventListener('click', () => {
+            dutchTransactionModal.classList.remove('active');
+        });
+
+        // 날짜 선택 시 거래 목록 업데이트
+        document.getElementById('dutch-date-select').addEventListener('change', function() {
+            const selectedDate = this.value;
+            renderTransactionSelectList(selectedDate);
+        });
+
+        // 더치페이 확인 모달 이벤트
+        document.getElementById('dutch-close-btn').addEventListener('click', () => {
+            dutchConfirmModal.classList.remove('active');
+            
+            // 모달 닫을 때 현재 거래 바로 저장 (더치페이 안함)
+            if (currentTransaction) {
+                addTransactionToData(currentTransaction);
+                renderCalendar();
+                updateSummary();
+                currentTransaction = null;
+            }
+        });
+
+        // 인원수 조절 버튼
+        document.querySelectorAll('.people-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const countInput = document.getElementById('dutch-people-count');
+                const currentCount = parseInt(countInput.value) || 2;
+                
+                if (this.dataset.count === 'plus' && currentCount < 10) {
+                    countInput.value = currentCount + 1;
+                } else if (this.dataset.count === 'minus' && currentCount > 2) {
+                    countInput.value = currentCount - 1;
+                }
+                updateDutchCalculation();
+            });
+        });
+
+        // 인원수 직접 입력 시 검증
+        document.getElementById('dutch-people-count').addEventListener('input', function() {
+            let value = this.value;
+            value = value.replace(/[^0-9]/g, '');
+            
+            if (value === '') {
+                this.value = '';
+                return;
+            }
+            
+            let numValue = parseInt(value);
+            if (numValue < 2) {
+                numValue = 2;
+            } else if (numValue > 10) {
+                numValue = 10;
+            }
+            
+            this.value = numValue;
+            updateDutchCalculation();
+        });
+
+        document.getElementById('dutch-people-count').addEventListener('blur', function() {
+            if (this.value === '' || parseInt(this.value) < 2) {
+                this.value = 2;
+                updateDutchCalculation();
+            }
+        });
+
+        // 더치페이 선택 버튼
+        document.querySelector('.dutch-no-btn').addEventListener('click', () => {
+            applyDutchPay(false);
+        });
+
+        document.querySelector('.dutch-yes-btn').addEventListener('click', () => {
+            const peopleCount = parseInt(document.getElementById('dutch-people-count').value) || 2;
+            applyDutchPay(true, peopleCount);
+        });
+
+        // 일별 상세 모달
+        document.getElementById('daily-detail-close').addEventListener('click', () => {
+            dailyDetailModal.classList.remove('active');
+        });
+
+        // 필터 관련 이벤트
+        document.getElementById('clear-filters').addEventListener('click', () => {
+            document.getElementById('category-filter').value = '';
+            document.getElementById('dutch-filter').value = '';
+            renderTransactions();
+        });
+
+        document.getElementById('category-filter').addEventListener('change', renderTransactions);
+        document.getElementById('dutch-filter').addEventListener('change', renderTransactions);
+
+        // 모달 외부 클릭시 닫기
+        [expenseModal, dutchConfirmModal, dutchTransactionModal, dailyDetailModal].forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    
+                    // 더치페이 모달이 닫힐 때 현재 거래 처리
+                    if (modal === dutchConfirmModal && currentTransaction) {
+                        addTransactionToData(currentTransaction);
+                        renderCalendar();
+                        updateSummary();
+                        currentTransaction = null;
+                    }
+                }
+            });
+        });
+    }
+
+    // 더치페이 거래 선택 모달 표시
+    function showDutchTransactionModal() {
+        dutchTransactionModal.classList.add('active');
+        document.getElementById('dutch-date-select').value = formatDate(today);
+        renderTransactionSelectList(formatDate(today));
+    }
+
+    // 거래 선택 리스트 렌더링
+    function renderTransactionSelectList(dateStr) {
+        const listContainer = document.getElementById('dutch-transaction-list');
+        const dayTransactions = expenseData[dateStr] || [];
+        
+        if (dayTransactions.length === 0) {
+            listContainer.innerHTML = '<div class="no-transactions">해당 날짜에 거래 내역이 없습니다.</div>';
+            return;
+        }
+        
+        let content = '';
+        dayTransactions.forEach((transaction, index) => {
+            content += `
+                <div class="transaction-select-item" data-date="${dateStr}" data-index="${index}">
+                    <div class="transaction-select-info">
+                        <div class="transaction-select-store">${transaction.store}</div>
+                        <div class="transaction-select-category">${transaction.category}</div>
+                    </div>
+                    <div class="transaction-select-amount">
+                        ${formatCurrency(transaction.originalAmount)}
+                        ${transaction.isDutch ? '<span class="transaction-select-dutch">더치페이</span>' : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+        listContainer.innerHTML = content;
+        
+        // 거래 선택 이벤트 추가
+        listContainer.querySelectorAll('.transaction-select-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const date = this.dataset.date;
+                const index = parseInt(this.dataset.index);
+                const transaction = expenseData[date][index];
+                
+                selectedTransactionForDutch = {date, index, transaction};
+                
+                // 선택 표시
+                listContainer.querySelectorAll('.transaction-select-item').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                // 더치페이 확인 모달로 이동
+                dutchTransactionModal.classList.remove('active');
+                showDutchConfirmModal(transaction);
+            });
+        });
+    }
+
+    // 더치페이 확인 모달 표시
+    function showDutchConfirmModal(transaction) {
+        document.getElementById('store-name').textContent = transaction.store;
+        document.getElementById('store-avg-price').textContent = formatCurrency(transaction.avgPrice);
+        document.getElementById('original-amount').textContent = formatCurrency(transaction.originalAmount);
+        document.getElementById('dutch-people-count').value = 2;
+        
+        // 현재 거래 정보 저장
+        dutchConfirmModal.transaction = transaction;
         
         updateDutchCalculation();
-      });
-    });
-    
-    // 수정: 인원수 직접 입력 시 검증 로직 개선
-    document.getElementById('dutch-people-count').addEventListener('input', function(e) {
-      // 입력 중 실시간 검증
-      let value = this.value;
-      
-      // 숫자가 아닌 문자 제거
-      value = value.replace(/[^0-9]/g, '');
-      
-      // 빈 값이면 그대로 두기 (사용자가 입력 중일 수 있음)
-      if (value === '') {
-        this.value = '';
-        return;
-      }
-      
-      // 숫자로 변환
-      let numValue = parseInt(value);
-      
-      // 범위 검증 (2-10)
-      if (numValue < 2) {
-        numValue = 2;
-      } else if (numValue > 10) {
-        numValue = 10;
-      }
-      
-      this.value = numValue;
-      updateDutchCalculation();
-    });
-    
-    // 수정: blur 이벤트로 최종 검증
-    document.getElementById('dutch-people-count').addEventListener('blur', function() {
-      if (this.value === '' || parseInt(this.value) < 2) {
-        this.value = 2;
-        updateDutchCalculation();
-      }
-    });
-    
-    // 더치페이 선택 버튼
-    document.querySelector('.dutch-no-btn').addEventListener('click', () => {
-      applyDutchPay(false);
-    });
-    
-    document.querySelector('.dutch-yes-btn').addEventListener('click', () => {
-      const peopleCount = parseInt(document.getElementById('dutch-people-count').value) || 2;
-      applyDutchPay(true, peopleCount);
-    });
-    
-    // 일별 상세 모달
-    document.getElementById('daily-detail-close').addEventListener('click', () => {
-      dailyDetailModal.classList.remove('active');
-    });
-    
-    // 모달 외부 클릭시 닫기
-    [expenseModal, dutchConfirmModal, dutchTransactionModal, dailyDetailModal].forEach(modal => {
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-          modal.classList.remove('active');
+        dutchConfirmModal.classList.add('active');
+    }
+
+    // 더치페이 계산 업데이트
+    function updateDutchCalculation() {
+        const peopleCount = parseInt(document.getElementById('dutch-people-count').value) || 2;
+        const transaction = dutchConfirmModal.transaction || currentTransaction;
+        
+        if (transaction) {
+            const myAmount = Math.round(transaction.originalAmount / peopleCount);
+            const savings = transaction.originalAmount - myAmount;
+            
+            document.getElementById('dutch-my-amount').textContent = formatCurrency(myAmount);
+            document.getElementById('dutch-savings-amount').textContent = formatCurrency(savings);
         }
-      });
-    });
-  }
-  
-  // 더치페이 거래 선택 모달 표시
-  function showDutchTransactionModal() {
-    dutchTransactionModal.classList.add('active');
-    document.getElementById('dutch-date-select').value = formatDate(today);
-    renderTransactionSelectList(formatDate(today));
-  }
-  
-  // 거래 선택 리스트 렌더링
-  function renderTransactionSelectList(dateStr) {
-    const listContainer = document.getElementById('dutch-transaction-list');
-    const dayExpenses = expenseData[dateStr] || [];
-    
-    if (dayExpenses.length === 0) {
-      listContainer.innerHTML = '<p class="no-transactions">해당 날짜에 거래 내역이 없습니다.</p>';
-      return;
     }
-    
-    let content = '';
-    dayExpenses.forEach((expense, index) => {
-      content += `
-        <div class="transaction-select-item" data-date="${dateStr}" data-index="${index}">
-          <div class="transaction-select-info">
-            <div class="transaction-select-store">${expense.store}</div>
-            <div class="transaction-select-category">${expense.category}</div>
-          </div>
-          <div>
-            <span class="transaction-select-amount">${expense.originalAmount.toLocaleString()}원</span>
-            ${expense.isDutch ? `<span class="transaction-select-dutch">${expense.peopleCount}명 더치</span>` : ''}
-          </div>
-        </div>
-      `;
-    });
-    
-    listContainer.innerHTML = content;
-    
-    // 거래 선택 이벤트 추가
-    document.querySelectorAll('.transaction-select-item').forEach(item => {
-      item.addEventListener('click', function() {
-        document.querySelectorAll('.transaction-select-item').forEach(i => i.classList.remove('selected'));
-        this.classList.add('selected');
-        
-        const date = this.getAttribute('data-date');
-        const index = parseInt(this.getAttribute('data-index'));
-        selectedTransactionForDutch = { date, index };
-        
-        // 선택한 거래로 더치페이 확인 모달 표시
-        const selectedExpense = expenseData[date][index];
-        dutchTransactionModal.classList.remove('active');
-        showDutchConfirmModal(selectedExpense.originalAmount, 'existing');
-      });
-    });
-  }
-  
-  // 더치페이 확인 모달 표시
-  function showDutchConfirmModal(amount, type) {
-    document.getElementById('original-amount-display').textContent = amount.toLocaleString() + '원';
-    document.getElementById('dutch-people-count').value = '2';
-    updateDutchCalculation();
-    dutchConfirmModal.classList.add('active');
-    dutchConfirmModal.dataset.type = type;
-  }
-  
-  // 더치페이 계산 업데이트
-  function updateDutchCalculation() {
-    const originalAmountText = document.getElementById('original-amount-display').textContent;
-    const originalAmount = parseInt(originalAmountText.replace(/[^0-9]/g, ''));
-    const peopleCount = parseInt(document.getElementById('dutch-people-count').value) || 2;
-    
-    const myAmount = Math.floor(originalAmount / peopleCount);
-    const savings = originalAmount - myAmount;
-    
-    document.getElementById('my-amount-display').textContent = myAmount.toLocaleString() + '원';
-    document.getElementById('savings-display').textContent = savings.toLocaleString() + '원';
-  }
-  
-  // 더치페이 적용
-  function applyDutchPay(isDutch, peopleCount = 1) {
-    const modalType = dutchConfirmModal.dataset.type;
-    
-    if (modalType === 'new') {
-      // 새 지출 추가
-      saveNewExpenseWithDutch(isDutch, peopleCount);
-    } else if (modalType === 'existing' && selectedTransactionForDutch) {
-      // 기존 거래 수정
-      updateExistingTransactionDutch(isDutch, peopleCount);
-    }
-    
-    dutchConfirmModal.classList.remove('active');
-  }
-  
-  // 새 지출 저장
-  function saveNewExpenseWithDutch(isDutch, peopleCount) {
-    const date = document.getElementById('expense-date').value;
-    const store = document.getElementById('expense-store').value;
-    const originalAmount = parseInt(document.getElementById('expense-amount').value);
-    const category = document.getElementById('expense-category').value;
-    const memo = document.getElementById('expense-memo').value;
-    
-    const expense = {
-      store,
-      originalAmount,
-      amount: isDutch ? Math.floor(originalAmount / peopleCount) : originalAmount,
-      category,
-      isDutch,
-      peopleCount: isDutch ? peopleCount : 1,
-      memo
-    };
-    
-    if (!expenseData[date]) {
-      expenseData[date] = [];
-    }
-    
-    expenseData[date].push(expense);
-    resetExpenseForm();
-    updateAllData();
-    
-    const message = isDutch ? 
-      `더치페이 지출이 추가되었습니다! (${peopleCount}명, ${expense.amount.toLocaleString()}원)` :
-      '지출이 추가되었습니다!';
-    alert(message);
-  }
-  
-  // 기존 거래 더치페이 적용
-  function updateExistingTransactionDutch(isDutch, peopleCount) {
-    const { date, index } = selectedTransactionForDutch;
-    const expense = expenseData[date][index];
-    
-    expense.isDutch = isDutch;
-    expense.peopleCount = isDutch ? peopleCount : 1;
-    expense.amount = isDutch ? Math.floor(expense.originalAmount / peopleCount) : expense.originalAmount;
-    
-    selectedTransactionForDutch = null;
-    updateAllData();
-    
-    const message = isDutch ? 
-      `${expense.store} 거래에 더치페이가 적용되었습니다! (${peopleCount}명, ${expense.amount.toLocaleString()}원)` :
-      `${expense.store} 거래가 일반결제로 변경되었습니다.`;
-    alert(message);
-  }
-  
-  // 달력 렌더링
-  function renderCalendar() {
-    try {
-      calendarGrid.innerHTML = '';
-      
-      const firstDay = new Date(currentYear, currentMonth, 1);
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const firstDayOfWeek = firstDay.getDay();
-      const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
-      
-      currentMonthYear.textContent = `${currentYear}년 ${monthNames[currentMonth]}`;
-      
-      // 이전 달 날짜들
-      for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-        const day = daysInPrevMonth - i;
-        const cell = createDateCell(day, 'other-month');
-        calendarGrid.appendChild(cell);
-      }
-      
-      // 현재 달 날짜들
-      for (let day = 1; day <= daysInMonth; day++) {
-        const cell = createDateCell(day, 'current-month');
-        
-        if (currentYear === today.getFullYear() && 
-            currentMonth === today.getMonth() && 
-            day === today.getDate()) {
-          cell.classList.add('today');
+
+    // 더치페이 적용
+    function applyDutchPay(isDutch, peopleCount = 1) {
+        if (currentTransaction) {
+            if (isDutch) {
+                currentTransaction.isDutch = true;
+                currentTransaction.peopleCount = peopleCount;
+                currentTransaction.finalAmount = Math.round(currentTransaction.originalAmount / peopleCount);
+            } else {
+                currentTransaction.isDutch = false;
+                currentTransaction.peopleCount = 1;
+                currentTransaction.finalAmount = currentTransaction.originalAmount;
+            }
+            
+            addTransactionToData(currentTransaction);
+            renderCalendar();
+            updateSummary();
+            currentTransaction = null;
+        } else if (selectedTransactionForDutch) {
+            // 기존 거래 수정
+            const {date, index} = selectedTransactionForDutch;
+            const transaction = expenseData[date][index];
+            
+            if (isDutch) {
+                transaction.isDutch = true;
+                transaction.peopleCount = peopleCount;
+                transaction.finalAmount = Math.round(transaction.originalAmount / peopleCount);
+            } else {
+                transaction.isDutch = false;
+                transaction.peopleCount = 1;
+                transaction.finalAmount = transaction.originalAmount;
+            }
+            
+            renderCalendar();
+            updateSummary();
+            selectedTransactionForDutch = null;
         }
         
-        const dayOfWeek = new Date(currentYear, currentMonth, day).getDay();
-        if (dayOfWeek === 0) cell.classList.add('weekend-sun');
-        if (dayOfWeek === 6) cell.classList.add('weekend-sat');
+        dutchConfirmModal.classList.remove('active');
+    }
+
+    // 데이터에 거래 추가
+    function addTransactionToData(transaction) {
+        if (!expenseData[transaction.date]) {
+            expenseData[transaction.date] = [];
+        }
+        expenseData[transaction.date].push(transaction);
+    }
+
+    // 달력 렌더링
+    function renderCalendar() {
+        const year = currentYear;
+        const month = currentMonth;
         
-        cell.addEventListener('click', function() {
-          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-          showDailyDetail(dateStr, day);
+        currentMonthYear.textContent = `${year}년 ${monthNames[month]}`;
+        
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDate = new Date(firstDay);
+        startDate.setDate(startDate.getDate() - firstDay.getDay());
+        
+        let content = '';
+        const today = new Date();
+        
+        for (let i = 0; i < 42; i++) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(startDate.getDate() + i);
+            
+            const dateStr = formatDate(currentDate);
+            const dayTransactions = expenseData[dateStr] || [];
+            const totalAmount = dayTransactions.reduce((sum, t) => sum + t.finalAmount, 0);
+            const dutchSavings = dayTransactions.reduce((sum, t) => {
+                return t.isDutch ? sum + (t.originalAmount - t.finalAmount) : sum;
+            }, 0);
+            
+            const isToday = currentDate.toDateString() === today.toDateString();
+            const isCurrentMonth = currentDate.getMonth() === month;
+            const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;
+            
+            let classes = 'date-cell';
+            if (isToday) classes += ' today';
+            if (!isCurrentMonth) classes += ' other-month';
+            if (isWeekend && currentDate.getDay() === 0) classes += ' weekend-sun';
+            if (isWeekend && currentDate.getDay() === 6) classes += ' weekend-sat';
+            
+            content += `
+                <div class="${classes}" data-date="${dateStr}">
+                    <div class="date-number">${currentDate.getDate()}</div>
+                    ${totalAmount > 0 ? 
+                        `<div class="expense-amount">${formatCurrency(totalAmount)}</div>` +
+                        (dutchSavings > 0 ? `<div class="expense-dutch">절약 ${formatCurrency(dutchSavings)}</div>` : '') +
+                        `<div class="expense-count">${dayTransactions.length}건</div>`
+                        : '<div class="no-expense">지출 없음</div>'
+                    }
+                </div>
+            `;
+        }
+        
+        calendarGrid.innerHTML = content;
+        updateSummary();
+        
+        // 날짜 클릭 이벤트 추가
+        calendarGrid.querySelectorAll('.date-cell').forEach(cell => {
+            cell.addEventListener('click', function() {
+                const dateStr = this.dataset.date;
+                const dayTransactions = expenseData[dateStr] || [];
+                
+                if (dayTransactions.length > 0) {
+                    showDailyDetail(dateStr, dayTransactions);
+                }
+            });
+        });
+    }
+
+    // 일별 상세 보기
+    function showDailyDetail(dateStr, transactions) {
+        const date = new Date(dateStr);
+        const title = `${date.getMonth() + 1}월 ${date.getDate()}일 상세`;
+        document.getElementById('daily-detail-title').textContent = title;
+        
+        let content = '';
+        let totalAmount = 0;
+        let totalSavings = 0;
+        
+        transactions.forEach(transaction => {
+            totalAmount += transaction.finalAmount;
+            if (transaction.isDutch) {
+                totalSavings += (transaction.originalAmount - transaction.finalAmount);
+            }
+            
+            content += `
+                <div class="daily-expense-item">
+                    <div>
+                        <div class="expense-store-name">${transaction.store}</div>
+                        ${transaction.isDutch ? 
+                            `<div class="expense-original-amount">원금액: ${formatCurrency(transaction.originalAmount)}</div>` : ''
+                        }
+                        <div class="expense-final-amount">${formatCurrency(transaction.finalAmount)}</div>
+                    </div>
+                    <div>
+                        ${transaction.isDutch ? `<span class="dutch-badge">더치페이 ${transaction.peopleCount}명</span>` : ''}
+                        <span class="category-badge">${transaction.category}</span>
+                    </div>
+                </div>
+            `;
         });
         
-        calendarGrid.appendChild(cell);
-      }
-      
-      // 다음 달 날짜들
-      const totalCells = 42;
-      const cellsUsed = firstDayOfWeek + daysInMonth;
-      const remainingCells = totalCells - cellsUsed;
-      
-      for (let day = 1; day <= remainingCells; day++) {
-        const cell = createDateCell(day, 'other-month');
-        calendarGrid.appendChild(cell);
-      }
-      
-      updateAllStatistics();
-      
-    } catch (error) {
-      console.error('달력 렌더링 오류:', error);
-    }
-  }
-  
-  // 날짜 셀 생성
-  function createDateCell(day, type) {
-    const cell = document.createElement('div');
-    cell.className = `date-cell ${type}`;
-    
-    let cellContent = `<div class="date-number">${day}</div>`;
-    
-    if (type === 'current-month') {
-      const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      const dayExpenses = expenseData[dateStr] || [];
-      
-      if (dayExpenses.length > 0) {
-        const totalAmount = calculateDayTotal(dayExpenses);
-        const dutchCount = dayExpenses.filter(e => e.isDutch).length;
+        content += `
+            <div class="daily-total">
+                총 지출: ${formatCurrency(totalAmount)}
+                ${totalSavings > 0 ? ` | 절약: ${formatCurrency(totalSavings)}` : ''}
+            </div>
+        `;
         
-        cellContent += `<div class="expense-amount">${totalAmount.toLocaleString()}원</div>`;
-        
-        if (dutchCount > 0) {
-          cellContent += `<div class="expense-dutch">더치 ${dutchCount}건</div>`;
-        }
-        
-        cellContent += `<div class="expense-count">${dayExpenses.length}건</div>`;
-      } else {
-        cellContent += `<div class="no-expense">식비 없음</div>`;
-      }
+        document.getElementById('daily-detail-content').innerHTML = content;
+        dailyDetailModal.classList.add('active');
     }
-    
-    cell.innerHTML = cellContent;
-    return cell;
-  }
-  
-  // 하루 총 지출 계산
-  function calculateDayTotal(expenses) {
-    return expenses.reduce((total, expense) => total + expense.amount, 0);
-  }
-  
-  // 일별 상세 내역 표시
-  function showDailyDetail(dateStr, day) {
-    const dayExpenses = expenseData[dateStr] || [];
-    
-    if (dayExpenses.length === 0) {
-      alert('해당 날짜에 지출 내역이 없습니다.');
-      return;
+
+    // 요약 정보 업데이트
+    function updateSummary() {
+        const currentMonthTransactions = getCurrentMonthTransactions();
+        const totalAmount = currentMonthTransactions.reduce((sum, t) => sum + t.finalAmount, 0);
+        const totalSavings = currentMonthTransactions.reduce((sum, t) => {
+            return t.isDutch ? sum + (t.originalAmount - t.finalAmount) : sum;
+        }, 0);
+        
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const avgDaily = Math.round(totalAmount / daysInMonth);
+        
+        const maxDayAmount = Math.max(...Object.keys(expenseData)
+            .filter(date => date.startsWith(`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`))
+            .map(date => expenseData[date].reduce((sum, t) => sum + t.finalAmount, 0)));
+        
+        document.getElementById('sidebar-total').textContent = formatCurrency(totalAmount);
+        document.getElementById('sidebar-avg').textContent = formatCurrency(avgDaily);
+        document.getElementById('sidebar-max').textContent = formatCurrency(maxDayAmount || 0);
+        document.getElementById('sidebar-savings').textContent = formatCurrency(totalSavings);
     }
-    
-    document.getElementById('daily-detail-title').textContent = `${currentMonth + 1}월 ${day}일 상세 내역`;
-    
-    let content = '';
-    let totalAmount = 0;
-    
-    dayExpenses.forEach(expense => {
-      totalAmount += expense.amount;
-      
-      content += `
-        <div class="daily-expense-item">
-          <div>
-            <div class="expense-store-name">${expense.store}</div>
-            <div style="font-size: 0.8rem; color: #6c757d;">${expense.category}</div>
-          </div>
-          <div style="text-align: right;">
-            ${expense.isDutch ? `<div class="expense-original-amount">${expense.originalAmount.toLocaleString()}원</div>` : ''}
-            <div class="expense-final-amount">${expense.amount.toLocaleString()}원</div>
-            ${expense.isDutch ? `<span class="dutch-badge">${expense.peopleCount}명 더치</span>` : ''}
-          </div>
-        </div>
-      `;
-    });
-    
-    content += `<div class="daily-total">총 지출: ${totalAmount.toLocaleString()}원</div>`;
-    
-    document.getElementById('daily-detail-content').innerHTML = content;
-    dailyDetailModal.classList.add('active');
-  }
-  
-  // 거래 내역 렌더링
-  function renderTransactions() {
-    const transactionList = document.getElementById('transaction-list');
-    const currentMonthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
-    const allTransactions = [];
-    let totalSpent = 0;
-    let totalSavings = 0;
-    
-    Object.keys(expenseData).forEach(date => {
-      if (date.startsWith(currentMonthStr)) {
-        expenseData[date].forEach(expense => {
-          allTransactions.push({ date, ...expense });
-          totalSpent += expense.amount;
-          
-          if (expense.isDutch) {
-            totalSavings += (expense.originalAmount - expense.amount);
-          }
+
+    // 현재 월 거래 데이터 가져오기
+    function getCurrentMonthTransactions() {
+        const monthPrefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+        let transactions = [];
+        
+        Object.keys(expenseData).forEach(date => {
+            if (date.startsWith(monthPrefix)) {
+                transactions = transactions.concat(expenseData[date]);
+            }
         });
-      }
-    });
-    
-    document.getElementById('transaction-total').textContent = totalSpent.toLocaleString() + '원';
-    document.getElementById('dutch-savings').textContent = totalSavings.toLocaleString() + '원';
-    
-    allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    if (allTransactions.length === 0) {
-      transactionList.innerHTML = '<div style="text-align: center; padding: 2rem; color: #666;">이번 달 거래 내역이 없습니다.</div>';
-      return;
-    }
-    
-    let content = '';
-    allTransactions.forEach(transaction => {
-      content += `
-        <div class="transaction-item">
-          <div class="transaction-date">${transaction.date}</div>
-          <div class="transaction-store">${transaction.store}</div>
-          <div class="transaction-category">${transaction.category}</div>
-          <div class="transaction-amount-cell">
-            ${transaction.isDutch ? 
-              `<div class="transaction-original-amount">${transaction.originalAmount.toLocaleString()}원</div>` : 
-              ''
-            }
-            <div class="transaction-final-amount">${transaction.amount.toLocaleString()}원</div>
-          </div>
-          <div class="transaction-dutch-status">
-            ${transaction.isDutch ? 
-              `<span class="transaction-dutch-badge">${transaction.peopleCount}명 더치</span>` : 
-              `<span class="transaction-normal-badge">일반결제</span>`
-            }
-          </div>
-          <div class="transaction-actions">
-            <button class="edit-btn">수정</button>
-            <button class="delete-btn">삭제</button>
-          </div>
-        </div>
-      `;
-    });
-    
-    transactionList.innerHTML = content;
-  }
-  
-  // 리포트 렌더링
-  function renderReports() {
-    const data = getCurrentMonthData();
-    // 기존 통계 업데이트
-    document.getElementById('report-total').textContent       = data.totalAmount.toLocaleString() + '원';
-    document.getElementById('report-dutch-saved').textContent = data.dutchSaved.toLocaleString() + '원';
-    document.getElementById('dutch-count').textContent        = data.dutchCount + '건';
-    document.getElementById('total-count').textContent        = data.totalCount + '건';
-    document.getElementById('dutch-ratio').textContent        = data.totalCount > 0
-      ? Math.round(data.dutchCount / data.totalCount * 100) + '%' : '0%';
-    document.getElementById('daily-average').textContent      = 
-      Math.round(data.totalAmount / new Date().getDate()).toLocaleString() + '원';
-
-    renderPieChart();
-  }
-
-  // 파이차트 생성
-  function renderPieChart() {
-    const ctx = document.getElementById('category-pie-chart');
-    if (!ctx) return;
-
-    // 기존 인스턴스 파괴
-    if (ctx.chart) {
-      ctx.chart.destroy();
+        
+        return transactions;
     }
 
-    // 임의 비율 데이터: 식비40, 생활비30, 교통비10, 기타20
-    const data = {
-      labels: ['식비','생활비','교통비','기타'],
-      datasets: [{
-        data: [40,30,10,20],
-        backgroundColor: ['#3c40c6','#28a745','#3498db','#e74c3c'],
-        borderWidth: 2
-      }]
-    };
-
-    const options = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'right',
-          labels: { boxWidth:20, padding:15 }
-        },
-        tooltip: {
-          callbacks: {
-            label: ctx => {
-              const total = ctx.dataset.data.reduce((s,v)=>s+v,0);
-              const pct = ((ctx.raw/total)*100).toFixed(1);
-              return `${ctx.label}: ${ctx.raw}% (${pct}%)`;
-            }
-          }
+    // 거래 내역 렌더링
+    function renderTransactions() {
+        const currentMonthTransactions = getCurrentMonthTransactions();
+        
+        // 필터 적용
+        const categoryFilter = document.getElementById('category-filter').value;
+        const dutchFilter = document.getElementById('dutch-filter').value;
+        
+        let filteredTransactions = [...currentMonthTransactions];
+        
+        if (categoryFilter) {
+            filteredTransactions = filteredTransactions.filter(t => t.category === categoryFilter);
         }
-      }
-    };
-
-    ctx.chart = new Chart(ctx, { type:'pie', data, options });
-  }
-
-  // 리포트 페이지 활성 시 실행
-  navItems.forEach(item => {
-    if (item.getAttribute('data-page') === 'reports') {
-      item.addEventListener('click', () => renderReports());
-    }
-  });
-
-  // 초기 달력 렌더링 수행 후 통계 등 초기화
-  renderCalendar();
-  renderReports();
-
-
-  
-  // 현재 월 데이터 계산
-  function getCurrentMonthData() {
-    let totalAmount = 0;
-    let dutchSaved = 0;
-    let dutchCount = 0;
-    let totalCount = 0;
-    
-    const currentMonthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
-    
-    Object.keys(expenseData).forEach(date => {
-      if (date.startsWith(currentMonthStr)) {
-        expenseData[date].forEach(expense => {
-          totalCount++;
-          totalAmount += expense.amount;
-          
-          if (expense.isDutch) {
-            dutchCount++;
-            dutchSaved += (expense.originalAmount - expense.amount);
-          }
+        
+        if (dutchFilter !== '') {
+            const isDutch = dutchFilter === 'true';
+            filteredTransactions = filteredTransactions.filter(t => t.isDutch === isDutch);
+        }
+        
+        const totalAmount = filteredTransactions.reduce((sum, t) => sum + t.finalAmount, 0);
+        const totalSavings = filteredTransactions.reduce((sum, t) => {
+            return t.isDutch ? sum + (t.originalAmount - t.finalAmount) : sum;
+        }, 0);
+        
+        document.getElementById('monthly-total').textContent = formatCurrency(totalAmount);
+        document.getElementById('monthly-savings').textContent = formatCurrency(totalSavings);
+        
+        const transactionList = document.getElementById('transaction-list');
+        let content = '';
+        
+        // 날짜순으로 정렬
+        const sortedTransactions = filteredTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        sortedTransactions.forEach(transaction => {
+            content += `
+                <div class="transaction-item">
+                    <div class="transaction-date">${formatDateKr(transaction.date)}</div>
+                    <div class="transaction-store">${transaction.store}</div>
+                    <div class="transaction-original-amount">
+                        ${transaction.isDutch ? formatCurrency(transaction.originalAmount) : ''}
+                    </div>
+                    <div class="transaction-final-amount">${formatCurrency(transaction.finalAmount)}</div>
+                    <div class="transaction-category">${transaction.category}</div>
+                    <div class="${transaction.isDutch ? 'transaction-dutch-badge' : 'transaction-normal-badge'}">
+                        ${transaction.isDutch ? `더치페이 ${transaction.peopleCount}명` : '일반결제'}
+                    </div>
+                </div>
+            `;
         });
-      }
-    });
-    
-    return { totalAmount, dutchSaved, dutchCount, totalCount };
-  }
-  
-  // 모든 통계 및 화면 업데이트
-  function updateAllStatistics() {
-    const currentMonthData = getCurrentMonthData();
-    
-    document.getElementById('sidebar-total').textContent = currentMonthData.totalAmount.toLocaleString() + '원';
-    document.getElementById('sidebar-average').textContent = currentMonthData.totalCount > 0 ? 
-      Math.round(currentMonthData.totalAmount / currentMonthData.totalCount).toLocaleString() + '원' : '0원';
-    
-    let maxAmount = 0;
-    Object.keys(expenseData).forEach(date => {
-      if (date.startsWith(`${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`)) {
-        const dayTotal = calculateDayTotal(expenseData[date]);
-        if (dayTotal > maxAmount) {
-          maxAmount = dayTotal;
-        }
-      }
-    });
-    
-    document.getElementById('sidebar-max').textContent = maxAmount.toLocaleString() + '원';
-    document.getElementById('sidebar-dutch-saved').textContent = currentMonthData.dutchSaved.toLocaleString() + '원';
-  }
-  
-  function updateAllData() {
-    renderCalendar();
-    updateAllStatistics();
-    if (document.getElementById('transactions-page').classList.contains('active')) {
-      renderTransactions();
+        
+        transactionList.innerHTML = content || '<div class="no-data">거래 내역이 없습니다.</div>';
     }
-  }
-  
-  // 폼 초기화
-  function resetExpenseForm() {
-    document.getElementById('expense-store').value = '';
-    document.getElementById('expense-amount').value = '';
-    document.getElementById('expense-memo').value = '';
-  }
-  
-  // 날짜 포맷 함수
-  function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-  
-  // 초기화
-  initEventListeners();
-  renderCalendar();
-  updateAllStatistics();
+
+    // 리포트 렌더링
+    function renderReports() {
+        const currentMonthTransactions = getCurrentMonthTransactions();
+        const totalAmount = currentMonthTransactions.reduce((sum, t) => sum + t.finalAmount, 0);
+        const totalSavings = currentMonthTransactions.reduce((sum, t) => {
+            return t.isDutch ? sum + (t.originalAmount - t.finalAmount) : sum;
+        }, 0);
+        
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        const avgDaily = Math.round(totalAmount / daysInMonth);
+        
+        // 최고 지출일 찾기
+        const dailyTotals = {};
+        currentMonthTransactions.forEach(t => {
+            if (!dailyTotals[t.date]) {
+                dailyTotals[t.date] = 0;
+            }
+            dailyTotals[t.date] += t.finalAmount;
+        });
+        
+        const maxDay = Object.keys(dailyTotals).reduce((maxDate, date) => {
+            return dailyTotals[date] > (dailyTotals[maxDate] || 0) ? date : maxDate;
+        }, '');
+        
+        document.getElementById('report-total').textContent = formatCurrency(totalAmount);
+        document.getElementById('report-savings').textContent = formatCurrency(totalSavings);
+        document.getElementById('report-daily-avg').textContent = formatCurrency(avgDaily);
+        document.getElementById('report-max-day').textContent = maxDay ? 
+            `${formatDateKr(maxDay)} (${formatCurrency(dailyTotals[maxDay])})` : '-';
+        
+        // 더치페이 분석
+        const dutchCount = currentMonthTransactions.filter(t => t.isDutch).length;
+        const totalCount = currentMonthTransactions.length;
+        const dutchRatio = totalCount > 0 ? Math.round((dutchCount / totalCount) * 100) : 0;
+        
+        document.getElementById('dutch-count').textContent = `${dutchCount}건`;
+        document.getElementById('total-count').textContent = `${totalCount}건`;
+        document.getElementById('dutch-ratio').textContent = `${dutchRatio}%`;
+        
+        // 카테고리별 지출 파이차트 (요청한 고정 비율)
+        renderCategoryPieChart();
+    }
+
+    // 카테고리별 지출 파이차트 (요청한 고정 비율로 구현)
+    function renderCategoryPieChart() {
+        const ctx = document.getElementById('category-pie-chart');
+        if (!ctx) return;
+        
+        const context = ctx.getContext('2d');
+        
+        // 기존 차트 있으면 제거
+        if (window.categoryChart) {
+            window.categoryChart.destroy();
+        }
+        
+        // 요청한 고정 비율로 차트 데이터 설정: 식비 40%, 교통비 10%, 생활비 30%, 기타 20%
+        const data = {
+            labels: ['식비', '교통비', '생활비', '기타'],
+            datasets: [{
+                data: [40, 10, 30, 20],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+        
+        window.categoryChart = new Chart(context, {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                return `${label}: ${value}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 유틸리티 함수들
+    function formatDate(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    function formatDateKr(dateStr) {
+        const date = new Date(dateStr);
+        return `${date.getMonth() + 1}/${date.getDate()}`;
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('ko-KR').format(amount) + '원';
+    }
+
+    // 초기화
+    function init() {
+        initEventListeners();
+        renderCalendar();
+        updateSummary();
+    }
+
+    // 앱 시작
+    init();
 });

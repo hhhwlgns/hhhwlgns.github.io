@@ -1,344 +1,329 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>스마트 식비 가계부</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- Chart.js CDN 추가 -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트 가계부</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- 사이드바 -->
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <h2>📅 가계부</h2>
-      <button class="close-btn" id="close-btn">&times;</button>
-    </div>
-    <div class="sidebar-menu">
-      <a href="#" class="nav-item active" data-page="calendar">📅 달력 보기</a>
-      <a href="#" class="nav-item" data-page="transactions">📋 거래 내역</a>
-      <a href="#" class="nav-item" data-page="budget">💰 예산 관리</a>
-      <a href="#" class="nav-item" data-page="reports">📊 리포트</a>
-      <a href="#" class="nav-item" data-page="settings">⚙️ 설정</a>
-    </div>
-    <div class="sidebar-summary">
-      <h3>이번 달 요약</h3>
-      <div class="summary-item">
-        <span>총 지출</span>
-        <span id="sidebar-total">0원</span>
-      </div>
-      <div class="summary-item">
-        <span>일평균</span>
-        <span id="sidebar-average">0원</span>
-      </div>
-      <div class="summary-item">
-        <span>최고액</span>
-        <span id="sidebar-max">0원</span>
-      </div>
-      <div class="summary-item">
-        <span>더치페이 절약</span>
-        <span id="sidebar-dutch-saved">0원</span>
-      </div>
-    </div>
-  </nav>
-
-  <!-- 메인 콘텐츠 -->
-  <main class="main-content">
-    <!-- 상단 헤더 -->
-    <header class="main-header">
-      <button class="menu-toggle" id="menu-toggle">☰</button>
-      <h1>스마트 식비 가계부</h1>
-      <div class="header-actions">
-        <button class="demo-dutch-btn">💰 더치페이</button>
-        <button class="add-expense-btn">+ 지출 추가</button>
-      </div>
-    </header>
-
-    <!-- 페이지 컨테이너 -->
-    <div class="page-container">
-      <!-- 달력 페이지 -->
-      <div id="calendar-page" class="page active">
-        <div class="calendar-header">
-          <button id="prev-month" class="nav-btn">&lt;</button>
-          <h2 id="current-month-year">2025년 6월</h2>
-          <button id="next-month" class="nav-btn">&gt;</button>
+    <!-- 사이드바 -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>📅 가계부</h2>
+            <button class="close-btn" id="close-btn">&times;</button>
         </div>
-        
-        <div class="calendar-container">
-          <div class="weekdays">
-            <div class="weekday sun">일</div>
-            <div class="weekday">월</div>
-            <div class="weekday">화</div>
-            <div class="weekday">수</div>
-            <div class="weekday">목</div>
-            <div class="weekday">금</div>
-            <div class="weekday sat">토</div>
-          </div>
-          
-          <div id="calendar-grid" class="calendar-grid">
-            <!-- JavaScript에서 동적 생성 -->
-          </div>
-        </div>
-      </div>
-
-      <!-- 거래 내역 페이지 -->
-      <div id="transactions-page" class="page">
-        <div class="transactions-header">
-          <h2>거래 내역</h2>
-          <div class="transaction-summary">
-            <div class="summary-card">
-              <span>이번 달 총 지출</span>
-              <span id="transaction-total" class="total-amount">0원</span>
+        <nav class="sidebar-menu">
+            <a href="#" class="nav-item active" data-page="calendar">📅 달력 보기</a>
+            <a href="#" class="nav-item" data-page="transactions">📋 거래 내역</a>
+            <a href="#" class="nav-item" data-page="budget">💰 예산 관리</a>
+            <a href="#" class="nav-item" data-page="reports">📊 리포트</a>
+            <a href="#" class="nav-item" data-page="settings">⚙️ 설정</a>
+        </nav>
+        <div class="sidebar-summary">
+            <h3>이번 달 요약</h3>
+            <div class="summary-item">
+                <span>총 지출</span>
+                <span id="sidebar-total">0원</span>
             </div>
-            <div class="summary-card">
-              <span>더치페이 절약</span>
-              <span id="dutch-savings" class="savings-amount">0원</span>
+            <div class="summary-item">
+                <span>일평균</span>
+                <span id="sidebar-avg">0원</span>
             </div>
-          </div>
-        </div>
-        
-        <div class="transaction-filters">
-          <input type="date" id="date-filter" placeholder="날짜 필터">
-          <select id="category-filter">
-            <option value="">전체 카테고리</option>
-            <option value="식료품">식료품</option>
-            <option value="외식">외식</option>
-            <option value="카페">카페</option>
-            <option value="배달">배달</option>
-          </select>
-          <select id="dutch-filter">
-            <option value="">전체</option>
-            <option value="dutch">더치페이</option>
-            <option value="normal">일반결제</option>
-          </select>
-          <button class="clear-filter-btn">필터 초기화</button>
-        </div>
-        
-        <div class="transaction-list" id="transaction-list">
-          <!-- JavaScript에서 동적 생성 -->
-        </div>
-      </div>
-
-      <!-- 예산 관리 페이지 -->
-      <div id="budget-page" class="page">
-        <h2>예산 관리</h2>
-        <div class="budget-container">
-          <div class="budget-input">
-            <label for="monthly-budget">월간 식비 예산</label>
-            <input type="number" id="monthly-budget" placeholder="예산 금액 입력">
-            <button class="save-budget-btn">저장</button>
-          </div>
-          
-          <div class="budget-progress">
-            <h3>예산 사용 현황</h3>
-            <div class="progress-bar">
-              <div class="progress-fill" id="progress-fill"></div>
+            <div class="summary-item">
+                <span>최고액</span>
+                <span id="sidebar-max">0원</span>
             </div>
-            <div class="budget-info">
-              <span>사용: <span id="used-budget">0원</span></span>
-              <span>남은 예산: <span id="remaining-budget">0원</span></span>
+            <div class="summary-item">
+                <span>더치페이 절약</span>
+                <span id="sidebar-savings">0원</span>
             </div>
-          </div>
         </div>
-      </div>
-
-  <!-- 리포트 페이지 -->
-  <div id="reports-page" class="page">
-    <h2>소비 리포트</h2>
-    <div class="report-container">
-      <div class="report-card">
-        <h3>월별 통계</h3>
-        <div class="stat-item">
-          <span>총 지출</span>
-          <span id="report-total">0원</span>
-        </div>
-        <div class="stat-item">
-          <span>더치페이 절약</span>
-          <span id="report-dutch-saved">0원</span>
-        </div>
-        <div class="stat-item">
-          <span>평균 일일 지출</span>
-          <span id="daily-average">0원</span>
-        </div>
-        <div class="stat-item">
-          <span>최고 지출일</span>
-          <span id="max-day">-</span>
-        </div>
-      </div>
-      <div class="report-card">
-        <h3>더치페이 분석</h3>
-        <div class="stat-item">
-          <span>더치페이 건수</span>
-          <span id="dutch-count">0건</span>
-        </div>
-        <div class="stat-item">
-          <span>전체 결제 건수</span>
-          <span id="total-count">0건</span>
-        </div>
-        <div class="stat-item">
-          <span>더치페이 비율</span>
-          <span id="dutch-ratio">0%</span>
-        </div>
-      </div>
-      <!-- 파이차트 카드 -->
-      <div class="report-card">
-        <h3>카테고리별 지출</h3>
-        <canvas id="category-pie-chart"></canvas>
-      </div>
     </div>
-  </div>
 
-      <!-- 설정 페이지 -->
-      <div id="settings-page" class="page">
-        <h2>설정</h2>
-        <div class="settings-container">
-          <div class="setting-group">
-            <h3>알림 설정</h3>
-            <div class="switch-container">
-              <label class="switch">
-                <input type="checkbox" id="daily-reminder">
-                <span class="slider"></span>
-              </label>
-              <span class="switch-label">일일 지출 알림</span>
+    <!-- 메인 콘텐츠 -->
+    <div class="main-content">
+        <header class="main-header">
+            <button class="menu-toggle" id="menu-toggle">☰</button>
+            <h1>스마트 가계부</h1>
+            <div class="header-actions">
+                <button class="demo-dutch-btn" id="demo-dutch-btn">🧾 더치페이 시뮬레이션</button>
+                <button class="add-expense-btn">+ 지출 추가</button>
             </div>
-            <div class="switch-container">
-              <label class="switch">
-                <input type="checkbox" id="budget-alert">
-                <span class="slider"></span>
-              </label>
-              <span class="switch-label">예산 초과 경고</span>
+        </header>
+
+        <div class="page-container">
+            <!-- 달력 페이지 -->
+            <div id="calendar-page" class="page active">
+                <div class="calendar-header">
+                    <button class="nav-btn" id="prev-month">‹</button>
+                    <h2 id="current-month-year">2025년 6월</h2>
+                    <button class="nav-btn" id="next-month">›</button>
+                </div>
+                <div class="calendar-container">
+                    <div class="weekdays">
+                        <div class="weekday sun">일</div>
+                        <div class="weekday">월</div>
+                        <div class="weekday">화</div>
+                        <div class="weekday">수</div>
+                        <div class="weekday">목</div>
+                        <div class="weekday">금</div>
+                        <div class="weekday sat">토</div>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
 
-  <!-- 지출 추가 모달 -->
-  <div class="modal" id="expense-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>지출 추가</h3>
-        <button class="modal-close">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>날짜</label>
-          <input type="date" id="expense-date">
-        </div>
-        <div class="form-group">
-          <label>가게명</label>
-          <input type="text" id="expense-store" placeholder="가게명 입력">
-        </div>
-        <div class="form-group">
-          <label>금액</label>
-          <input type="number" id="expense-amount" placeholder="금액 입력">
-        </div>
-        <div class="form-group">
-          <label>카테고리</label>
-          <select id="expense-category">
-            <option value="식료품">식료품</option>
-            <option value="외식">외식</option>
-            <option value="카페">카페</option>
-            <option value="배달">배달</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>메모</label>
-          <input type="text" id="expense-memo" placeholder="메모 (선택사항)">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="cancel-btn">취소</button>
-        <button class="save-btn">저장</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 더치페이 거래 선택 모달 -->
-  <div class="modal" id="dutch-transaction-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>💰 더치페이할 거래 선택</h3>
-        <button class="modal-close" id="dutch-transaction-close">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label>날짜 선택</label>
-          <input type="date" id="dutch-date-select">
-        </div>
-        <div class="transaction-select-list" id="dutch-transaction-list">
-          <p class="no-transactions">날짜를 선택하면 해당 날의 거래 내역이 표시됩니다.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 더치페이 확인 모달 -->
-  <div class="modal" id="dutch-confirm-modal">
-    <div class="modal-content dutch-modal-content">
-      <div class="modal-header">
-        <h3>💰 더치페이 확인</h3>
-        <button class="modal-close" id="dutch-close-btn">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="dutch-question">
-          <p>이 결제는 더치페이(n분의 1)로 처리하시겠습니까?</p>
-          <div class="payment-preview">
-            <div class="original-amount">
-              <span>원래 금액:</span>
-              <span id="original-amount-display">0원</span>
+            <!-- 거래 내역 페이지 -->
+            <div id="transactions-page" class="page">
+                <div class="transactions-header">
+                    <div class="transaction-summary">
+                        <div class="summary-card">
+                            <span>이번 달 총 지출</span>
+                            <span class="total-amount" id="monthly-total">0원</span>
+                        </div>
+                        <div class="summary-card">
+                            <span>더치페이 절약</span>
+                            <span class="savings-amount" id="monthly-savings">0원</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="transaction-filters">
+                    <select id="category-filter">
+                        <option value="">전체 카테고리</option>
+                        <option value="식비">식비</option>
+                        <option value="교통비">교통비</option>
+                        <option value="생활비">생활비</option>
+                        <option value="기타">기타</option>
+                    </select>
+                    <select id="dutch-filter">
+                        <option value="">전체</option>
+                        <option value="true">더치페이</option>
+                        <option value="false">일반결제</option>
+                    </select>
+                    <button class="clear-filter-btn" id="clear-filters">필터 초기화</button>
+                </div>
+                <div class="transaction-list" id="transaction-list"></div>
             </div>
-          </div>
-        </div>
-        
-        <div class="dutch-options">
-          <div class="dutch-info" id="dutch-info" style="display: block;">
-            <div class="form-group">
-              <label for="dutch-people-count">총 인원 (본인 포함)</label>
-              <div class="people-selector">
-                <button type="button" class="people-btn" data-count="minus">-</button>
-                <input type="number" id="dutch-people-count" min="2" max="10" value="2">
-                <button type="button" class="people-btn" data-count="plus">+</button>
-              </div>
-            </div>
-            <div class="dutch-preview">
-              <div class="my-amount">
-                <span>내가 낼 금액:</span>
-                <span id="my-amount-display" class="highlight-amount">0원</span>
-              </div>
-              <div class="savings-preview">
-                <span>절약 금액:</span>
-                <span id="savings-display" class="savings-text">0원</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="dutch-no-btn">아니오 (전액 지불)</button>
-        <button class="dutch-yes-btn">예 (더치페이)</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- 일별 상세 내역 모달 -->
-  <div class="modal" id="daily-detail-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="daily-detail-title">일별 상세 내역</h3>
-        <button class="modal-close" id="daily-detail-close">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div id="daily-detail-content">
-          <!-- JavaScript에서 동적 생성 -->
-        </div>
-      </div>
-    </div>
-  </div>
+            <!-- 예산 관리 페이지 -->
+            <div id="budget-page" class="page">
+                <div class="budget-container">
+                    <div class="budget-input">
+                        <label for="monthly-budget">월간 예산</label>
+                        <input type="number" id="monthly-budget" placeholder="예산을 입력하세요">
+                        <button class="save-budget-btn">저장</button>
+                    </div>
+                    <div class="budget-progress">
+                        <h3>예산 사용 현황</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="budget-progress-fill"></div>
+                        </div>
+                        <div class="budget-info">
+                            <span>사용: <span id="budget-used">0원</span></span>
+                            <span>남은 예산: <span id="budget-remaining">0원</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <script src="script.js"></script>
+            <!-- 리포트 페이지 -->
+            <div id="reports-page" class="page">
+                <div class="report-container">
+                    <div class="report-card">
+                        <h3>월별 통계</h3>
+                        <div class="stat-item">
+                            <span>총 지출</span>
+                            <span id="report-total">0원</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>더치페이 절약</span>
+                            <span id="report-savings">0원</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>평균 일일 지출</span>
+                            <span id="report-daily-avg">0원</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>최고 지출일</span>
+                            <span id="report-max-day">-</span>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <h3>더치페이 분석</h3>
+                        <div class="stat-item">
+                            <span>더치페이 건수</span>
+                            <span id="dutch-count">0건</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>전체 결제 건수</span>
+                            <span id="total-count">0건</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>더치페이 비율</span>
+                            <span id="dutch-ratio">0%</span>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <h3>카테고리별 지출</h3>
+                        <canvas id="category-pie-chart" width="300" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 설정 페이지 -->
+            <div id="settings-page" class="page">
+                <div class="settings-container">
+                    <div class="setting-group">
+                        <h3>알림 설정</h3>
+                        <div class="switch-container">
+                            <span class="switch-label">일일 알림</span>
+                            <label class="switch">
+                                <input type="checkbox" id="daily-notification">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="switch-container">
+                            <span class="switch-label">예산 초과 경고</span>
+                            <label class="switch">
+                                <input type="checkbox" id="budget-warning">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="switch-container">
+                            <span class="switch-label">자동 더치페이 확인</span>
+                            <label class="switch">
+                                <input type="checkbox" id="auto-dutch-check" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 지출 추가 모달 -->
+    <div class="modal" id="expense-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>지출 추가</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="expense-date">날짜</label>
+                    <input type="date" id="expense-date">
+                </div>
+                <div class="form-group">
+                    <label for="expense-store">가게명</label>
+                    <input type="text" id="expense-store" placeholder="가게명을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="expense-amount">금액</label>
+                    <input type="number" id="expense-amount" placeholder="금액을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="expense-category">카테고리</label>
+                    <select id="expense-category">
+                        <option value="식비">식비</option>
+                        <option value="교통비">교통비</option>
+                        <option value="생활비">생활비</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="expense-memo">메모</label>
+                    <input type="text" id="expense-memo" placeholder="메모 (선택사항)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn">취소</button>
+                <button class="save-btn">저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 더치페이 확인 모달 -->
+    <div class="modal" id="dutch-confirm-modal">
+        <div class="modal-content dutch-modal-content">
+            <div class="modal-header">
+                <h3>💰 더치페이 여부 확인</h3>
+                <button class="modal-close" id="dutch-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="dutch-question">
+                    <p><strong><span id="store-name"></span></strong>에서 결제한 금액이</p>
+                    <p>평균 가격(<span id="store-avg-price">0</span>)보다 높습니다.</p>
+                    <p>더치페이로 처리하시겠습니까?</p>
+                </div>
+                <div class="dutch-info">
+                    <div class="payment-info">
+                        <div class="amount-info">
+                            <span>원금액: <strong id="original-amount">0원</strong></span>
+                        </div>
+                    </div>
+                    <div class="people-selector">
+                        <button class="people-btn" data-count="minus">-</button>
+                        <input type="number" id="dutch-people-count" value="2" min="2" max="10">
+                        <button class="people-btn" data-count="plus">+</button>
+                    </div>
+                    <div class="dutch-preview">
+                        <div class="my-amount">
+                            <span>내가 낼 금액:</span>
+                            <span class="highlight-amount" id="dutch-my-amount">0원</span>
+                        </div>
+                        <div class="savings-preview">
+                            <span class="savings-text">절약 금액: <span id="dutch-savings-amount">0원</span></span>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 1rem; color: #666; font-size: 0.9rem;">
+                    총 인원 (2~10명)
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="dutch-no-btn">아니오</button>
+                <button class="dutch-yes-btn">예</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 더치페이 거래 선택 모달 -->
+    <div class="modal" id="dutch-transaction-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>더치페이 거래 선택</h3>
+                <button class="modal-close" id="dutch-transaction-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="dutch-date-select">날짜 선택</label>
+                    <input type="date" id="dutch-date-select">
+                </div>
+                <div class="transaction-select-list" id="dutch-transaction-list">
+                    <div class="no-transactions">거래 내역이 없습니다.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 일별 상세 모달 -->
+    <div class="modal" id="daily-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="daily-detail-title">일별 상세</h3>
+                <button class="modal-close" id="daily-detail-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="daily-detail-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
