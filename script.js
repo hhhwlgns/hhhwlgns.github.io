@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const today = new Date();
   let currentMonth = today.getMonth();
   let currentYear = today.getFullYear();
-  let expenseOverrides = {}; // key: `${date}|${store}`, value: override object
+  let expenseOverrides = loadExpenseOverrides(); // key: `${date}|${store}`, value: override object
   // 데이터 저장소
   let expenseData = {};
   let selectedTransactionForDutch = null;
@@ -505,6 +505,7 @@ function applyDutchPay(isDutch, peopleCount = 1) {
         finalAmount: transaction.originalAmount
       };
     }
+    saveExpenseOverrides();
   }
 
   dutchConfirmModal.classList.remove('active');
@@ -837,7 +838,23 @@ function applyDutchPay(isDutch, peopleCount = 1) {
         return new Intl.NumberFormat('ko-KR').format(amount) + '원';
     }
 
+    function loadExpenseOverrides() {
+     try {
+        const data = localStorage.getItem('expenseOverrides');
+        return data ? JSON.parse(data) : {};
+     } catch (e) {
+        console.warn('override 복원 실패', e);
+        return {};
+     }
+    }
 
+    function saveExpenseOverrides() {
+     try {
+        localStorage.setItem('expenseOverrides', JSON.stringify(expenseOverrides));
+     } catch (e) {
+        console.warn('override 저장 실패', e);
+     }
+    }
 
   // 초기화
   function init() {
