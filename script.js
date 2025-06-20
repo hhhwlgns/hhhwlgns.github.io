@@ -31,21 +31,77 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 백엔드 API에서 받아올 샘플 데이터 구조
     const sampleApiData = [
-        { date: '2025-06-01', store: '이모즉석떡볶이', originalAmount: 45000, avgPrice: 8500 },
-        { date: '2025-06-01', store: '가메이', originalAmount: 24000, avgPrice: 10000 },
-        { date: '2025-06-02', store: '궁중보쌈', originalAmount: 18000, avgPrice: 20000 },
-        { date: '2025-06-03', store: '닭살부부', originalAmount: 15000, avgPrice: 20000 },
-        { date: '2025-06-04', store: '금산양꼬치', originalAmount: 36000, avgPrice: 12000 },
-        { date: '2025-06-05', store: '메가커피', originalAmount: 3500, avgPrice: 5000 },
-        { date: '2025-06-06', store: '구름카츠', originalAmount: 32000, avgPrice: 14000 },
-        { date: '2025-06-07', store: '인하칼국수', originalAmount: 18000, avgPrice: 8000 },
-        { date: '2025-06-08', store: '미식당', originalAmount: 50000, avgPrice: 11000 },
-        { date: '2025-06-09', store: '커리야', originalAmount: 18500, avgPrice: 10000 },
-        { date: '2025-06-10', store: '성수완당', originalAmount: 15000, avgPrice: 10000 },
-        { date: '2025-06-11', store: '면식당', originalAmount: 6500, avgPrice: 8000 },
-        { date: '2025-06-12', store: '킹콩순두부', originalAmount: 28000, avgPrice: 15000 },
-        { date: '2025-06-13', store: '춘리마라탕', originalAmount: 12500, avgPrice: 8000 }
-    ];
+  {
+    date: '2025-06-01', store: '이모즉석떡볶이',
+    originalAmount: 45000, avgPrice: 8500,
+    isSample: true, isDutch: true, peopleCount: 5, finalAmount: 9000
+  },
+  {
+    date: '2025-06-01', store: '가메이',
+    originalAmount: 24000, avgPrice: 10000,
+    isSample: true, isDutch: false, peopleCount: 2, finalAmount:12000
+  },
+  {
+    date: '2025-06-02', store: '궁중보쌈',
+    originalAmount: 18000, avgPrice: 20000,
+    isSample: true, isDutch: false, peopleCount: 1, finalAmount: 18000
+  },
+  {
+    date: '2025-06-03', store: '닭살부부',
+    originalAmount: 15000, avgPrice: 20000,
+    isSample: true, isDutch: false, peopleCount: 1, finalAmount: 15000
+  },
+  {
+    date: '2025-06-04', store: '금산양꼬치',
+    originalAmount: 36000, avgPrice: 12000,
+    isSample: true, isDutch: true, peopleCount: 4, finalAmount: 9000
+  },
+  {
+    date: '2025-06-05', store: '메가커피',
+    originalAmount: 3500, avgPrice: 5000,
+    isSample: true, isDutch: false, peopleCount: 1, finalAmount: 3500
+  },
+  {
+    date: '2025-06-06', store: '구름카츠',
+    originalAmount: 32000, avgPrice: 14000,
+    isSample: true, isDutch: true, peopleCount: 4, finalAmount: 8000
+  },
+  {
+    date: '2025-06-07', store: '인하칼국수',
+    originalAmount: 18000, avgPrice: 8000,
+    isSample: true, isDutch: true, peopleCount: 3, finalAmount: 6000
+  },
+  {
+    date: '2025-06-08', store: '미식당',
+    originalAmount: 50000, avgPrice: 11000,
+    isSample: true, isDutch: true, peopleCount: 5, finalAmount: 10000
+  },
+  {
+    date: '2025-06-09', store: '커리야',
+    originalAmount: 18500, avgPrice: 10000,
+    isSample: true, isDutch: true, peopleCount: 1, finalAmount: 18500
+  },
+  {
+    date: '2025-06-10', store: '성수완당',
+    originalAmount: 15000, avgPrice: 10000,
+    isSample: true, isDutch: true, peopleCount: 1, finalAmount: 15000
+  },
+  {
+    date: '2025-06-11', store: '면식당',
+    originalAmount: 6500, avgPrice: 8000,
+    isSample: true, isDutch: false, peopleCount: 1, finalAmount: 6500
+  },
+  {
+    date: '2025-06-12', store: '킹콩순두부',
+    originalAmount: 28000, avgPrice: 15000,
+    isSample: true, isDutch: true, peopleCount: 4, finalAmount: 7000
+  },
+  {
+    date: '2025-06-13', store: '춘리마라탕',
+    originalAmount: 12500, avgPrice: 8000,
+    isSample: true, isDutch: true, peopleCount: 1, finalAmount: 12500
+  }
+];
 
     const monthNames = [
         '1월', '2월', '3월', '4월', '5월', '6월',
@@ -135,36 +191,59 @@ function confirmDutchPay(apiData, callback) {
 
     // API 데이터를 전체 거래 정보로 변환하는 함수 (더치페이 확인 포함)
     function processApiDataToTransaction(apiData, category = '기타', memo = '', callback) {
-        if (apiData.originalAmount > apiData.avgPrice) {
-            confirmDutchPay(apiData, (isDutch, peopleCount) => {
-                const transaction = {
-                    date: apiData.date,
-                    store: apiData.store,
-                    originalAmount: apiData.originalAmount,
-                    avgPrice: apiData.avgPrice,
-                    category: category,
-                    isDutch: isDutch,
-                    peopleCount: peopleCount,
-                    finalAmount: isDutch ? Math.round(apiData.originalAmount / peopleCount) : apiData.originalAmount,
-                    memo: memo
-                };
-                callback(transaction);
-            });
-        } else {
-            const transaction = {
-                date: apiData.date,
-                store: apiData.store,
-                originalAmount: apiData.originalAmount,
-                avgPrice: apiData.avgPrice,
-                category: category,
-                isDutch: false,
-                peopleCount: 1,
-                finalAmount: apiData.originalAmount,
-                memo: memo
-            };
-            setTimeout(() => callback(transaction), 10);
-        }
-    }
+  // 1) 샘플 데이터는 모달 없이 바로 처리
+  if (apiData.isSample) {
+    const transaction = {
+      date: apiData.date,
+      store: apiData.store,
+      originalAmount: apiData.originalAmount,
+      avgPrice: apiData.avgPrice,
+      category: category,
+      isDutch: apiData.isDutch,
+      peopleCount: apiData.peopleCount,
+      finalAmount: apiData.finalAmount,
+      memo: memo
+    };
+    // 비동기 처리 패턴 유지
+    setTimeout(() => callback(transaction), 0);
+    return;
+  }
+
+  // 2) 실제 API 데이터는 기존 로직 수행
+  if (apiData.originalAmount > apiData.avgPrice) {
+    confirmDutchPay(apiData, (isDutch, peopleCount) => {
+      const finalAmt = isDutch
+        ? Math.round(apiData.originalAmount / peopleCount)
+        : apiData.originalAmount;
+      const transaction = {
+        date: apiData.date,
+        store: apiData.store,
+        originalAmount: apiData.originalAmount,
+        avgPrice: apiData.avgPrice,
+        category: category,
+        isDutch: isDutch,
+        peopleCount: peopleCount,
+        finalAmount: finalAmt,
+        memo: memo
+      };
+      callback(transaction);
+    });
+  } else {
+    // 평균가 이하 결제인 경우
+    const transaction = {
+      date: apiData.date,
+      store: apiData.store,
+      originalAmount: apiData.originalAmount,
+      avgPrice: apiData.avgPrice,
+      category: category,
+      isDutch: false,
+      peopleCount: 1,
+      finalAmount: apiData.originalAmount,
+      memo: memo
+    };
+    setTimeout(() => callback(transaction), 0);
+  }
+}
 
     // 순차적으로 API 데이터 처리
     function processApiDataSequentially(apiDataArray, index = 0) {
@@ -196,27 +275,22 @@ function confirmDutchPay(apiData, callback) {
     }
 
     // 데이터 가져오기 및 렌더링
-    function fetchExpenseDataAndRender() {
-        fetch('/all-expenses')
-            .then(response => {
-                if (!response.ok) throw new Error('서버 응답 실패');
-                return response.json();
-            })
-            .then(serverData => {
-                const mergedData = [...serverData, ...sampleApiData];
-                updateExpenseDataFromApi(mergedData);
-            })
-            .catch(error => {
-                console.warn('[경고] 서버 오류, 샘플 데이터만 사용:', error.message);
-                // 이미 저장된 데이터가 있으면 샘플 데이터 추가하지 않음
-                if (Object.keys(expenseData).length === 0) {
-                    updateExpenseDataFromApi(sampleApiData);
-                } else {
-                    renderCalendar();
-                    updateSummary();
-                }
-            });
-    }
+function fetchExpenseDataAndRender() {
+  fetch('/all-expenses')
+    .then(response => {
+      if (!response.ok) throw new Error('서버 응답 실패');
+      return response.json();
+    })
+    .then(serverData => {
+      const mergedData = [...serverData, ...sampleApiData];
+      updateExpenseDataFromApi(mergedData);
+    })
+    .catch(error => {
+      console.warn('[경고] 서버 오류, 샘플 데이터만 사용:', error.message);
+      // 샘플 데이터만 있을 때도 같은 로직 적용
+      updateExpenseDataFromApi(sampleApiData);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM이 로드되었습니다.');
