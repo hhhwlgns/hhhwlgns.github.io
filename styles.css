@@ -1152,4 +1152,51 @@ input:checked + .slider:before {
   padding: 2rem;
 }
 
+/* 일별 상세 모달 개선 */
+.daily-header {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #3c40c6;
+}
+
+.daily-header h4 {
+    margin: 0 0 0.5rem 0;
+    color: #3c40c6;
+    font-size: 1.2rem;
+}
+
+.daily-summary {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.transaction-date-header {
+    background: #e3f2fd;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: 1px solid #3c40c6;
+}
+
+.transaction-date-header h4 {
+    margin: 0;
+    color: #3c40c6;
+    font-size: 1.1rem;
+}
+
+.no-transactions {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+.no-transactions h4 {
+    color: #3c40c6;
+    margin-bottom: 1rem;
+}
+
+
 }
